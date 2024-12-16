@@ -29,14 +29,14 @@ import { mergePlugins } from "../Graph/Plugin.js";
 
 export default class Create extends Command {
   private stdin: string = "";
-  private readonly defaultOutFile = "terraform-diagram";
+  private static readonly defaultFileNameConvention = "terraform-diagram";
 
   static override description = "describe the command here";
   static override examples = ["<%= config.bin %> <%= command.id %>"];
   static override flags = {
     configFile: Flags.string({
       required: false,
-      default: "terraform-diagram.js",
+      default: `${Create.defaultFileNameConvention}.js`,
       char: "c",
     }),
     outFile: Flags.string({
@@ -190,7 +190,7 @@ export default class Create extends Command {
 
     const outFileName = flags.outFile
       ? flags.outFile
-      : `${this.defaultOutFile}.${flags.outFormat}`;
+      : `${Create.defaultFileNameConvention}.${flags.outFormat}`;
 
     logger(`writing ${outFileName}`);
     if (flags.outFormat === "txt") {
