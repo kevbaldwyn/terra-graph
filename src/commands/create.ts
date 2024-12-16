@@ -29,7 +29,7 @@ import { mergePlugins } from "../Graph/Plugin.js";
 
 export default class Create extends Command {
   private stdin: string = "";
-  private static readonly defaultFileNameConvention = "terraform-diagram";
+  private static readonly defaultFileNameConvention = "terra-graph";
 
   static override description = "describe the command here";
   static override examples = ["<%= config.bin %> <%= command.id %>"];
