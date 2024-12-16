@@ -1,7 +1,6 @@
 import { NodeWithMeta } from "../../../Nodes/Node.js";
 import { Graph } from "../../Graph.js";
 import { Hook } from "../../Hooks/Hooks.js";
-import { edgeReverse } from "../../Hooks/Modifiers/edgeReverse.js";
 import { Plugin } from "../../Plugin.js";
 
 const createDefaultEventBus = (graph: Graph): Graph => {

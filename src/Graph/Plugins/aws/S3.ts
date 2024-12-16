@@ -1,5 +1,3 @@
-import { NodeModifier } from "../../../Nodes/Modifier.js";
-import { Node, NodeWithMeta } from "../../../Nodes/Node.js";
 import { Hook } from "../../Hooks/Hooks.js";
 import { edgeReverse } from "../../Hooks/Modifiers/edgeReverse.js";
 import { nodeToEdgeLabel } from "../../Hooks/Modifiers/nodeToEdgeLabel.js";

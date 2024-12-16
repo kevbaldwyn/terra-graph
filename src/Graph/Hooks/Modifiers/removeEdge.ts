@@ -1,6 +1,6 @@
-import { NodeMatchFn } from "../../../Nodes/Matcher";
-import { NodeModifier } from "../../../Nodes/Modifier";
-import { Node } from "../../../Nodes/Node";
+import { NodeMatchFn } from "../../../Nodes/Matcher.js";
+import { NodeModifier } from "../../../Nodes/Modifier.js";
+import { Node } from "../../../Nodes/Node.js";
 
 export const removeEdge = <NodeType extends Node = Node>(
   matchers: {

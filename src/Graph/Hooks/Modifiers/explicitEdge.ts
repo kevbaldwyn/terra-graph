@@ -1,5 +1,5 @@
-import { NodeModifier } from "../../../Nodes/Modifier";
-import { Node } from "../../../Nodes/Node";
+import { NodeModifier } from "../../../Nodes/Modifier.js";
+import { Node } from "../../../Nodes/Node.js";
 
 export const explicitEdge = (
   map: Map<string, { in?: string[]; out?: string[] }>
