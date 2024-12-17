@@ -1,22 +1,15 @@
-import { NodeMatchFn } from "../../../Nodes/Matcher.js";
+import { Matcher, NodeMatcher } from "../../../Nodes/Matcher.js";
 import { NodeModifier } from "../../../Nodes/Modifier.js";
 import { Node } from "../../../Nodes/Node.js";
 
-export const alignNodes = <NodeType extends Node = Node>(
+export const alignNodes = <NodeType extends Node>(
   matchers: {
-    from: NodeMatchFn<boolean, NodeType>;
-    to: NodeMatchFn<boolean, NodeType>;
+    from: NodeMatcher<NodeType>;
+    to: NodeMatcher<NodeType>;
   }[]
 ): NodeModifier<NodeType> => ({
   describe: () => alignNodes.name,
-  match: (nodeName, node, graph) => {
-    for (const matcher of matchers) {
-      if (matcher.from(nodeName, node, graph)) {
-        return true;
-      }
-    }
-    return false;
-  },
+  match: Matcher.edge.fromTo(matchers),
   modify: (nodeName, node, graph) => {
     for (const matcher of matchers) {
       if (matcher.from(nodeName, node, graph)) {

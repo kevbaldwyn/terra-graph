@@ -3,26 +3,27 @@ import { addMeta } from "../Graph/Hooks/Modifiers/addMeta.js";
 import { addModuleParent } from "../Graph/Hooks/Modifiers/addModuleParent.js";
 import { normaliseModules } from "../Graph/Hooks/Modifiers/normaliseModules.js";
 import { removeNodeAndRedirectRelationships } from "../Graph/Hooks/Modifiers/removeNodeAndRedirectRelationships.js";
+import { Matcher } from "../Nodes/Matcher.js";
 
 const core: HookMap = {
   [Hook.META_BEFORE]: [
     {
-      match: (nodeName, node) => {
-        return (
-          node.label.startsWith("data.") ||
-          node.label.startsWith("local.") ||
-          node.label.startsWith("var.") ||
-          node.label.startsWith("null_resource.") ||
-          node.label.startsWith("local_file.")
-        );
-      },
+      match: Matcher.node.labelStartsWith([
+        "data.",
+        "local.",
+        "var.",
+        "null_resource.",
+        "local_file.",
+      ]),
       remove: true,
     },
   ],
   [Hook.META_APPLY]: [
     addMeta(),
     addModuleParent(),
-    removeNodeAndRedirectRelationships(["time_sleep"]),
+    removeNodeAndRedirectRelationships(
+      Matcher.node.resourceEquals(["time_sleep"])
+    ),
   ],
   [Hook.GRAPH_FILTER]: [
     {

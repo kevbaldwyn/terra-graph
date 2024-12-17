@@ -1,3 +1,4 @@
+import { Matcher } from "../../../Nodes/Matcher.js";
 import { leafName, NodeWithMeta } from "../../../Nodes/Node.js";
 import { Hook } from "../../Hooks/Hooks.js";
 import { edgeReverse } from "../../Hooks/Modifiers/edgeReverse.js";
@@ -7,30 +8,24 @@ import { Plugin } from "../../Plugin.js";
 export const ApiGateway: Plugin = () => ({
   [Hook.META_BEFORE]: [
     {
-      match: (nodeName, node) => {
-        return (
-          nodeName.startsWith("aws_api_gateway_integration_response.") ||
-          nodeName.startsWith("aws_api_gateway_method_response.") ||
-          nodeName.startsWith("aws_api_gateway_method_settings.") ||
-          nodeName.startsWith("aws_api_gateway_account.") ||
-          nodeName.startsWith("aws_api_gateway_model.") ||
-          // WAF
-          nodeName.startsWith("aws_wafv2_web_acl_logging_configuration.")
-        );
-      },
+      match: Matcher.node.labelStartsWith([
+        "aws_api_gateway_integration_response.",
+        "aws_api_gateway_method_response.",
+        "aws_api_gateway_method_settings.",
+        "aws_api_gateway_account.",
+        "aws_api_gateway_model.",
+        "aws_wafv2_web_acl_logging_configuration.",
+      ]),
       remove: true,
     },
   ],
   [Hook.META_APPLY]: [
     // compress nodes between
     {
-      match: (nodeName, node: NodeWithMeta, graph) => {
-        return node.meta?.resource === "aws_api_gateway_rest_api";
-      },
+      match: Matcher.node.resourceEquals(["aws_api_gateway_rest_api"]),
       modify: (nodeName, node, graph) => {
         // compress into one node
         // maintain edges of end nodes
-
         const recurse = (nodeName: string, toRemove: string[]) => {
           const prev = graph.predecessors(nodeName) ?? [];
           if (prev.length === 1) {
@@ -79,20 +74,42 @@ export const ApiGateway: Plugin = () => ({
     },
   ],
   [Hook.GRAPH_DECORATE]: [
-    edgeReverse(
-      new Map([
-        ["aws_api_gateway_rest_api", ["aws_api_gateway_resource"]],
-        ["aws_api_gateway_method", ["aws_api_gateway_integration"]],
-        ["aws_api_gateway_resource", ["aws_api_gateway_method"]],
-        // WAF
-        ["aws_wafv2_web_acl", ["aws_wafv2_web_acl_association"]],
-        ["aws_wafv2_ip_set", ["aws_wafv2_web_acl"]],
+    edgeReverse([
+      {
+        from: Matcher.node.resourceOrNodeNameEquals([
+          "aws_api_gateway_rest_api",
+        ]),
+        to: Matcher.node.resourceOrNodeNameEquals(["aws_api_gateway_resource"]),
+      },
+      {
+        from: Matcher.node.resourceOrNodeNameEquals(["aws_api_gateway_method"]),
+        to: Matcher.node.resourceOrNodeNameEquals([
+          "aws_api_gateway_integration",
+        ]),
+      },
+      {
+        from: Matcher.node.resourceOrNodeNameEquals([
+          "aws_api_gateway_resource",
+        ]),
+        to: Matcher.node.resourceOrNodeNameEquals(["aws_api_gateway_method"]),
+      },
+      {
+        from: Matcher.node.resourceOrNodeNameEquals(["aws_wafv2_web_acl"]),
+        to: Matcher.node.resourceOrNodeNameEquals([
+          "aws_wafv2_web_acl_association",
+        ]),
+      },
+      {
+        from: Matcher.node.resourceOrNodeNameEquals(["aws_wafv2_ip_set"]),
+        to: Matcher.node.resourceOrNodeNameEquals(["aws_wafv2_web_acl"]),
+      },
+    ]),
+    nodeToEdgeLabel(
+      Matcher.node.resourceEquals([
+        "aws_api_gateway_deployment",
+        "aws_api_gateway_method",
+        "aws_wafv2_web_acl_association",
       ])
     ),
-    nodeToEdgeLabel([
-      "aws_api_gateway_deployment",
-      "aws_api_gateway_method",
-      "aws_wafv2_web_acl_association",
-    ]),
   ],
 });

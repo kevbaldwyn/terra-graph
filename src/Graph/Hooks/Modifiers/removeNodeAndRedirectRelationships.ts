@@ -1,21 +1,12 @@
 import { NodeMatcher } from "../../../Nodes/Matcher.js";
 import { NodeModifier } from "../../../Nodes/Modifier.js";
-import { NodeWithMeta } from "../../../Nodes/Node.js";
+import { Node, NodeWithMeta } from "../../../Nodes/Node.js";
 
 export const removeNodeAndRedirectRelationships = (
-  matches: string[] | NodeMatcher<NodeWithMeta>
+  match: NodeMatcher<NodeWithMeta>
 ): NodeModifier<NodeWithMeta> => ({
   describe: () => removeNodeAndRedirectRelationships.name,
-  match: (nodeName, node, graph) => {
-    if (typeof matches === "function") {
-      return matches(nodeName, node, graph);
-    } else {
-      return (
-        matches.includes(node.meta?.resource ?? "") ||
-        matches.includes(nodeName)
-      );
-    }
-  },
+  match,
   modify: (nodeName, node, graph) => {
     const inEdges = graph.inEdges(nodeName) ?? [];
     const outEdges = graph.outEdges(nodeName) ?? [];

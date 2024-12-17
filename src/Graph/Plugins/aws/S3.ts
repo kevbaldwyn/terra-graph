@@ -1,3 +1,4 @@
+import { Matcher } from "../../../Nodes/Matcher.js";
 import { Hook } from "../../Hooks/Hooks.js";
 import { edgeReverse } from "../../Hooks/Modifiers/edgeReverse.js";
 import { nodeToEdgeLabel } from "../../Hooks/Modifiers/nodeToEdgeLabel.js";
@@ -14,15 +15,24 @@ export const S3: Plugin = () => ({
         )
       );
     }),
-    edgeReverse(new Map([["aws_s3_bucket", ["aws_s3_bucket_notification"]]])),
+    edgeReverse([
+      {
+        from: Matcher.node.resourceOrNodeNameEquals(["aws_s3_bucket"]),
+        to: Matcher.node.resourceOrNodeNameEquals([
+          "aws_s3_bucket_notification",
+        ]),
+      },
+    ]),
   ],
   [Hook.GRAPH_FILTER]: [
     {
-      match: (nodeName, node) => {
-        return ["aws_s3_bucket_object"].includes(node.meta?.resource ?? "");
-      },
+      match: Matcher.node.resourceEquals(["aws_s3_bucket_object"]),
       remove: true,
     },
   ],
-  [Hook.GRAPH_DECORATE]: [nodeToEdgeLabel(["aws_s3_bucket_notification"])],
+  [Hook.GRAPH_DECORATE]: [
+    nodeToEdgeLabel(
+      Matcher.node.resourceEquals(["aws_s3_bucket_notification"])
+    ),
+  ],
 });

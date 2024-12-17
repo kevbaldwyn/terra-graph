@@ -1,3 +1,4 @@
+import { Matcher } from "../../../Nodes/Matcher.js";
 import { NodeWithMeta } from "../../../Nodes/Node.js";
 import { Graph } from "../../Graph.js";
 import { Hook } from "../../Hooks/Hooks.js";
@@ -19,9 +20,7 @@ const createDefaultEventBus = (graph: Graph): Graph => {
 export const TransferFamily: Plugin = () => ({
   [Hook.META_BEFORE]: [
     {
-      match: (nodeName, node) => {
-        return nodeName.startsWith("aws_transfer_tag.");
-      },
+      match: Matcher.node.labelStartsWith(["aws_transfer_tag."]),
       remove: true,
     },
   ],

@@ -1,3 +1,4 @@
+import { Matcher } from "../../../../Nodes/Matcher.js";
 import { NodeModifier } from "../../../../Nodes/Modifier.js";
 import { htmlLabel, NodeWithParent } from "../../../../Nodes/Node.js";
 
@@ -19,9 +20,7 @@ export const groupResources = (
   defaultBorderColour = "#666666"
 ): NodeModifier<NodeWithParent> => ({
   describe: () => `aws.${groupResources.name}`,
-  match: (nodeName, node) => {
-    return flattenResources(groupableResources).includes(node.meta!.resource);
-  },
+  match: Matcher.node.resourceEquals(flattenResources(groupableResources)),
   modify: (nodeName, node, graph) => {
     if (flattenResources(groupableResources).includes(node.meta!.resource)) {
       // get all nodes and put in a subgraph

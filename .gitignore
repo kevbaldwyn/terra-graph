@@ -4,3 +4,4 @@ dist
 .npmrc
 **.DS_Store
 src/config.*.ts
+*.diagram.png

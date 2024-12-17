@@ -1,49 +1,35 @@
+import { Matcher, NodeMatcher } from "../../../Nodes/Matcher.js";
 import { NodeModifier } from "../../../Nodes/Modifier.js";
 import { NodeWithMeta } from "../../../Nodes/Node.js";
 
-//TODO: make it more flexible - ie not just by resource type?
-export const edgeReverse = (
-  edgeMap: Map<string, string[]>,
+export const edgeReverse = <NodeType extends NodeWithMeta>(
+  matchers: {
+    from: NodeMatcher<NodeType>;
+    to: NodeMatcher<NodeType>;
+  }[],
   edgeOptions: Record<string, unknown> = {}
-): NodeModifier<NodeWithMeta> => {
+): NodeModifier<NodeType> => {
   return {
     describe: () => edgeReverse.name,
-    match: (nodeName, node) => {
-      const keys = [...edgeMap.keys()];
-      return (
-        keys.includes(node.meta?.resource ?? "") || keys.includes(nodeName)
-      );
-    },
+    match: Matcher.edge.fromTo(matchers),
     modify: (nodeName, node, graph) => {
-      // console.log(nodeName);
-      const matches =
-        edgeMap.get(node.meta?.resource ?? "") ?? edgeMap.get(nodeName);
-
-      const inEdges = graph.inEdges(nodeName);
-      // const outEdges = graph.outEdges(nodeName);
-      if (nodeName.endsWith("kraken_copy_schedule")) {
-        console.log(inEdges);
-      }
-      if (inEdges) {
-        inEdges.forEach((edge: any) => {
-          const edgeNode: NodeWithMeta = graph.node(edge.v);
-          if (matches?.includes(edgeNode.meta?.resource ?? "")) {
-            graph.setEdge(edge.w, edge.v, { ...edgeOptions });
-            graph.removeEdge(edge.v, edge.w);
+      for (const matcher of matchers) {
+        // for each match
+        if (matcher.from(nodeName, node, graph)) {
+          // get all the edges going from the match to another node
+          const inEdges = graph.inEdges(nodeName);
+          if (inEdges) {
+            inEdges.forEach((edge: any) => {
+              const edgeNode: NodeType = graph.node(edge.v);
+              // if the to node matches the rule then reverse the relationship
+              if (matcher.to(edge.v, edgeNode, graph)) {
+                graph.setEdge(edge.w, edge.v, { ...edgeOptions });
+                graph.removeEdge(edge.v, edge.w);
+              }
+            });
           }
-        });
+        }
       }
-
-      // if (outEdges) {
-      //   console.log(outEdges);
-      //   outEdges.forEach((edge: any) => {
-      //     const edgeNode: NodeWithMeta = graph.node(edge.w);
-      //     if (matches?.includes(edgeNode.meta?.resource ?? "")) {
-      //       graph.setEdge(edge.v, edge.w, { ...edgeOptions });
-      //       graph.removeEdge(edge.v, edge.w);
-      //     }
-      //   });
-      // }
     },
   };
 };

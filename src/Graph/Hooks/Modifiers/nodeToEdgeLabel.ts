@@ -1,20 +1,18 @@
+import { NodeMatcher } from "../../../Nodes/Matcher.js";
 import { NodeModifier } from "../../../Nodes/Modifier.js";
 import {
   htmlLabel,
   leafName,
-  Node,
   NodeWithMeta,
   rootName,
 } from "../../../Nodes/Node.js";
 
 // TODO: pass in style options
-export const nodeToEdgeLabel = (
-  nodeList: string[]
-): NodeModifier<NodeWithMeta> => ({
+export const nodeToEdgeLabel = <NodeType extends NodeWithMeta>(
+  match: NodeMatcher<NodeType>
+): NodeModifier<NodeType> => ({
   describe: () => nodeToEdgeLabel.name,
-  match: (nodeName, node) => {
-    return nodeList.includes(node.meta?.resource ?? "");
-  },
+  match,
   modify: (nodeName, node, graph) => {
     const edges = graph.nodeEdges(nodeName);
 
