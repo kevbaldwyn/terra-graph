@@ -8,4 +8,5 @@ export type Config = {
   graph?: Graph;
   hooks: HookMap;
   plugins?: Plugin[];
+  description?: Record<string, string>;
 };

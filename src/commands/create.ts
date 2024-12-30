@@ -18,7 +18,6 @@ import { mergePlugins } from "../Graph/Plugin.js";
  * graphviz
  * use references to resources for things like lambda environment vars to enable graph to be built correctly (rather than reference local or var name: ie dynamodb table name)
  */
-// TODO: standardise on edge matching ie from, to object (more versatile), or Map approach (less verbose) - or both (Type that covers both)
 // TODO: represent external connection (create the node and relationship) - new hook step, or hang off existing node - probably latter?
 // TODO: add label box node for describing graph (service, date, git version etc)
 // TODO: additional nodes and edges from an input file (yaml / dot?) or remove certain edges or nodes
@@ -26,6 +25,7 @@ import { mergePlugins } from "../Graph/Plugin.js";
 // TODO: test with VPC
 // TODO: name filters so they can be explicitly removed
 // TODO: pass a plan file to gain more context (edge direction / labels ie GIT PUT to S3 bucket)? / handle for_each / multiple instances
+// TODO: auto generate diagram key based on hooks / plugins used
 
 export default class Create extends Command {
   private stdin: string = "";
@@ -179,6 +179,23 @@ export default class Create extends Command {
       ranksep = 0.5;
     }
 
+    if (config.description) {
+      logger("writing label");
+      final.setNode("label", {
+        shape: "rect",
+        color: "#DDDDDD",
+        fontname: "sans-serif",
+        label: `<<table align="left" border="0" cellpadding="2" cellspacing="0" cellborder="0">
+                  ${Object.keys(config.description).map((k) => {
+                    return `<tr>
+                      <td align="left"><font point-size="9" color="#999999">${k}:</font></td>
+                      <td align="left"><font point-size="9" color="#555555">&nbsp;&nbsp;&nbsp;${config.description![k]}</font></td>
+                    </tr>`;
+                  }).join('')}
+                </table>>`,
+      });
+    }
+
     logger(`applying graph options: final node count: ${final.nodeCount()}`);
     final.setGraph({
       ...(final.graph() as unknown as Record<string, any>),
@@ -211,7 +228,7 @@ export default class Create extends Command {
 
   private async getConfig(
     configFile: string
-  ): Promise<Pick<Config, "graph" | "hooks">> {
+  ): Promise<Pick<Config, "graph" | "hooks" | "description">> {
     let config: Config;
     if (configFile) {
       // TODO: handle errors / invalid hookmap
@@ -227,9 +244,16 @@ export default class Create extends Command {
     } else {
       config = defaultConfig;
     }
-    return {
+
+    const r: Config = {
       graph: config.graph,
       hooks: extend(mergePlugins(config.plugins ?? []), config.hooks),
     };
+
+    if (config.description) {
+      r.description = config.description;
+    }
+
+    return r;
   }
 }
