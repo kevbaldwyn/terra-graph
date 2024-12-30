@@ -22,7 +22,11 @@ const config: Config = {
   hooks: {
     [Hook.META_BEFORE]: [
       {
-        match: Matcher.node.labelStartsWith(["aws_kms_key.", "aws_kms_alias."]),
+        match: Matcher.node.labelStartsWith([
+          "aws_kms_key.",
+          "aws_kms_alias.",
+          "aws_ssm_parameter.",
+        ]),
         remove: true,
       },
     ],
@@ -99,7 +103,7 @@ const config: Config = {
       },
     ],
     [Hook.GRAPH_DECORATE]: [
-      alignNodes<NodeWithMeta>([
+      alignNodes([
         {
           from: (nodeName, node) => node.meta?.resource === "aws_sqs_queue",
           to: (nodeName, node) => node.meta?.resource === "aws_sqs_queue",
@@ -114,6 +118,7 @@ const config: Config = {
         Matcher.node.resourceEquals([
           "aws_lambda_event_source_mapping",
           "aws_cloudwatch_event_target",
+          "aws_cloudwatch_log_destination",
         ])
       ),
       singleResources(),
