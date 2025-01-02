@@ -19,13 +19,10 @@ import { mergePlugins } from "../Graph/Plugin.js";
  * use references to resources for things like lambda environment vars to enable graph to be built correctly (rather than reference local or var name: ie dynamodb table name)
  */
 // TODO: represent external connection (create the node and relationship) - new hook step, or hang off existing node - probably latter?
-// TODO: add label box node for describing graph (service, date, git version etc)
-// TODO: additional nodes and edges from an input file (yaml / dot?) or remove certain edges or nodes
 // TODO: order of items inside step function
 // TODO: test with VPC
 // TODO: name filters so they can be explicitly removed
 // TODO: pass a plan file to gain more context (edge direction / labels ie GIT PUT to S3 bucket)? / handle for_each / multiple instances
-// TODO: auto generate diagram key based on hooks / plugins used
 
 export default class Create extends Command {
   private stdin: string = "";
@@ -113,7 +110,7 @@ export default class Create extends Command {
     const config = await this.getConfig(flags.configFile);
 
     logger(`reading graph`);
-    const graph = Graph.fromString(this.stdin);
+    const graph = Graph.fromString(this.stdin, [], [], config.description);
 
     // meta.before
     logger(`applying first filter: ${graph.nodeCount()} nodes`);
@@ -172,28 +169,11 @@ export default class Create extends Command {
     );
 
     const rankdir = config.graph!.rankdir!;
-    let ranksep = 3;
-    let nodesep = 0.5;
+    let ranksep = 2.5;
+    let nodesep = 0.6;
     if (["TB", "BT"].includes(rankdir)) {
-      nodesep = 3;
-      ranksep = 0.5;
-    }
-
-    if (config.description) {
-      logger("writing label");
-      final.setNode("label", {
-        shape: "rect",
-        color: "#DDDDDD",
-        fontname: "sans-serif",
-        label: `<<table align="left" border="0" cellpadding="2" cellspacing="0" cellborder="0">
-                  ${Object.keys(config.description).map((k) => {
-                    return `<tr>
-                      <td align="left"><font point-size="9" color="#999999">${k}:</font></td>
-                      <td align="left"><font point-size="9" color="#555555">&nbsp;&nbsp;&nbsp;${config.description![k]}</font></td>
-                    </tr>`;
-                  }).join('')}
-                </table>>`,
-      });
+      nodesep = 2.5;
+      ranksep = 0.6;
     }
 
     logger(`applying graph options: final node count: ${final.nodeCount()}`);

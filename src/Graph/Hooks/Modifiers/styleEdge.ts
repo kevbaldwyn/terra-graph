@@ -1,13 +1,13 @@
 import { Matcher, NodeMatcher } from "../../../Nodes/Matcher.js";
 import { NodeModifier } from "../../../Nodes/Modifier.js";
-import { NodeWithMeta } from "../../../Nodes/Node.js";
+import { EdgeOptions, NodeWithMeta } from "../../../Nodes/Node.js";
 
 export const styleEdge = <NodeType extends NodeWithMeta>(
   matchers: {
     from: NodeMatcher<NodeType>;
     to: NodeMatcher<NodeType>;
   }[],
-  edgeOptions: Record<string, string>
+  edgeOptions: EdgeOptions
 ): NodeModifier<NodeType> => ({
   describe: () => styleEdge.name,
   match: Matcher.edge.fromTo(matchers),
@@ -25,6 +25,7 @@ export const styleEdge = <NodeType extends NodeWithMeta>(
             // update the edge properties (merge with cirrent props)
             const currentEdge = graph.edge(edge.v, edge.w);
             graph.setEdge(edge.v, edge.w, { ...currentEdge, ...edgeOptions });
+            graph.addKey(edgeOptions);
           }
         });
       }

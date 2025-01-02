@@ -19,6 +19,10 @@ export interface NodeWithParent extends NodeWithMeta {
   };
 }
 
+export interface EdgeOptions extends Record<string, string | undefined> {
+  key?: string;
+}
+
 export const rootName = (label: string) => label.split(".")[0];
 export const leafName = (label: string) => label.split(".").pop() as string;
 // export const moduleResource = (label: string) => label.split(".")[2];

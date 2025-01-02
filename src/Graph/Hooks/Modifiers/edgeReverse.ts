@@ -1,13 +1,13 @@
 import { Matcher, NodeMatcher } from "../../../Nodes/Matcher.js";
 import { NodeModifier } from "../../../Nodes/Modifier.js";
-import { NodeWithMeta } from "../../../Nodes/Node.js";
+import { EdgeOptions, NodeWithMeta } from "../../../Nodes/Node.js";
 
 export const edgeReverse = <NodeType extends NodeWithMeta>(
   matchers: {
     from: NodeMatcher<NodeType>;
     to: NodeMatcher<NodeType>;
   }[],
-  edgeOptions: Record<string, unknown> = {}
+  edgeOptions: EdgeOptions = {}
 ): NodeModifier<NodeType> => {
   return {
     describe: () => edgeReverse.name,
@@ -25,6 +25,7 @@ export const edgeReverse = <NodeType extends NodeWithMeta>(
               if (matcher.to(edge.v, edgeNode, graph)) {
                 graph.setEdge(edge.w, edge.v, { ...edgeOptions });
                 graph.removeEdge(edge.v, edge.w);
+                graph.addKey(edgeOptions);
               }
             });
           }
