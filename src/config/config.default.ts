@@ -68,6 +68,7 @@ const config: Config = {
           dir: "both",
           style: "dotted",
           color: "#271aa0",
+          key: "DynamoDB Get or Put Item",
         }
       ),
       removeEdge<NodeWithMeta>([
@@ -103,11 +104,19 @@ const config: Config = {
       },
     ],
     [Hook.GRAPH_DECORATE]: [
-      alignNodes([
+      alignNodes(
+        [
+          {
+            from: (nodeName, node) => node.meta?.resource === "aws_sqs_queue",
+            to: (nodeName, node) => node.meta?.resource === "aws_sqs_queue",
+          },
+        ],
         {
-          from: (nodeName, node) => node.meta?.resource === "aws_sqs_queue",
-          to: (nodeName, node) => node.meta?.resource === "aws_sqs_queue",
-        },
+          color: "#c20202",
+          key: "SQS dead letters / failures",
+        }
+      ),
+      alignNodes([
         {
           from: (nodeName, node) =>
             node.meta?.resource === "aws_scheduler_schedule",
@@ -136,6 +145,7 @@ const config: Config = {
           dir: "both",
           style: "dotted",
           color: "#1a580e",
+          key: "S3 get or put object",
         }
       ),
     ],
