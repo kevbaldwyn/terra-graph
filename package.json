@@ -1,11 +1,21 @@
 {
-  "name": "noname",
+  "name": "@kevbaldwyn/terra-graph",
+  "author": {
+    "name": "Kevin Baldwyn",
+    "url": "https://github.com/kevbaldwyn"
+  },
   "version": "0.0.0",
   "type": "module",
   "files": [
-    "./dist/"
+    "./dist/",
+    "./resources/imgs/**/aws_*"
   ],
-  "scripts": {},
+  "scripts": {
+    "build": "(rm -r ./dist || true) && yarn lint && yarn build:ci",
+    "build:ci": "tsc -p tsconfig.json",
+    "lint": "biome check --write",
+    "lint:ci": "biome check"
+  },
   "devDependencies": {
     "@types/graphlib-dot": "^0.6.4",
     "@types/node": "^22.10.0",
@@ -18,12 +28,32 @@
     "graphlib-dot": "^0.6.4"
   },
   "bin": {
-    "terraform-diagram": "./bin/run.js"
+    "terra-graph": "./bin/run.js"
   },
   "oclif": {
-    "bin": "terraform-diagram",
+    "bin": "terra-graph",
     "commands": "./dist/commands",
-    "dirname": "terraform-diagram",
+    "dirname": "terra-graph",
     "topicSeparator": ":"
+  },
+  "release": {
+    "plugins": [
+      [
+        "@semantic-release/changelog",
+        {
+          "changelogFile": "CHANGELOG.md"
+        }
+      ],
+      [
+        "@semantic-release/git",
+        {
+          "assets": [
+            "package.json",
+            "CHANGELOG.md"
+          ],
+          "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+        }
+      ]
+    ]
   }
 }
