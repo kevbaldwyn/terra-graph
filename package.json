@@ -41,6 +41,9 @@
     "topicSeparator": ":"
   },
   "release": {
+    "branches": [
+      "main"
+    ],
     "plugins": [
       [
         "@semantic-release/changelog",
