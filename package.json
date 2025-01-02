@@ -8,7 +8,7 @@
     "type": "git",
     "url": "https://github.com/kevbaldwyn/terra-graph.git"
   },
-  "version": "1.0.0",
+  "version": "0.0.0",
   "type": "module",
   "files": [
     "./dist/",
@@ -22,8 +22,10 @@
   },
   "devDependencies": {
     "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/commit-analyzer": "^13.0.0",
     "@semantic-release/git": "^10.0.1",
     "@semantic-release/npm": "^12.0.1",
+    "@semantic-release/release-notes-generator": "^14.0.2",
     "@types/graphlib-dot": "^0.6.4",
     "@types/node": "^22.10.0",
     "biome": "^0.3.3",
@@ -49,6 +51,8 @@
       "main"
     ],
     "plugins": [
+      "@semantic-release/commit-analyzer",
+      "@semantic-release/release-notes-generator",
       [
         "@semantic-release/changelog",
         {
