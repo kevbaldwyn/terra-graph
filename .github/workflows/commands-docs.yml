@@ -1,0 +1,25 @@
+name: Commands Docs
+
+on:
+  push:
+    paths:
+      - 'src/commands/**'
+
+jobs:
+  update-command-docs:
+    name: Update Command Docs
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+      - name: Update readme
+        run: yarn oclif:readme
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          file_pattern: 'COMMANDS.md'
+          commit_message: 'docs(auto): Update COMMANDS.md'
