@@ -1,3 +1,10 @@
+## [1.0.2](https://github.com/kevbaldwyn/terra-graph/compare/v1.0.1...v1.0.2) (2025-01-06)
+
+
+### Bug Fixes
+
+* update dependencies ([4257374](https://github.com/kevbaldwyn/terra-graph/commit/4257374c804cc7e7dcaa41a7afa2b8c99069788a))
+
 ## [1.0.1](https://github.com/kevbaldwyn/terra-graph/compare/v1.0.0...v1.0.1) (2025-01-06)
 
 
