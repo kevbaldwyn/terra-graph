@@ -30,29 +30,41 @@ export default class Create extends Command {
 
   static override description =
     'Create a diagram from the piped output of `terraform graph`';
-  static override examples = ['<%= config.bin %> <%= command.id %>'];
+  static override examples = [
+    '<%= config.bin %> <%= command.id %>',
+    '<%= config.bin %> <%= command.id %> -o my-file.txt -f txt # generate raw dot format text file',
+    '<%= config.bin %> <%= command.id %> -c path/to/config.js # provide a custom configuration file with your own rules for manipualting the graph',
+  ];
   static override flags = {
     configFile: Flags.string({
       required: false,
       default: `${Create.defaultFileNameConvention}.js`,
       char: 'c',
+      description: 'Provide custom configuration as a javascript file',
     }),
     outFile: Flags.string({
       required: false,
       char: 'o',
+      description: `Provide a custom name for the generated diagram, defaults to ${Create.defaultFileNameConvention}.png`,
     }),
     outFormat: Flags.string({
       required: false,
       default: 'png',
       char: 'f',
+      description:
+        'Choose the format of the generated diagram, defaults to `png` (see graphviz available formats)',
     }),
     verbose: Flags.boolean({
       required: false,
       default: false,
+      description:
+        'Print detailed outoput of each hook and filter applied to the graph',
     }),
     continueOnError: Flags.boolean({
       required: false,
       default: false,
+      description:
+        'Continue to process graph and attenmpt to generate a diagram even if an error is encountered',
     }),
   };
 
