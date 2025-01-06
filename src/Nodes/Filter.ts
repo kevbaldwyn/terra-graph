@@ -1,5 +1,5 @@
-import { NodeMatcher, NodeMatchFn } from "./Matcher.js";
-import { Node } from "./Node.js";
+import { NodeMatchFn, NodeMatcher } from './Matcher.js';
+import { Node } from './Node.js';
 
 export type NodeFilterRemove<NodeType extends Node> =
   | boolean

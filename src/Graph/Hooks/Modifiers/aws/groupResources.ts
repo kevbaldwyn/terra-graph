@@ -1,6 +1,6 @@
-import { Matcher } from "../../../../Nodes/Matcher.js";
-import { NodeModifier } from "../../../../Nodes/Modifier.js";
-import { htmlLabel, NodeWithParent } from "../../../../Nodes/Node.js";
+import { Matcher } from '../../../../Nodes/Matcher.js';
+import { NodeModifier } from '../../../../Nodes/Modifier.js';
+import { NodeWithParent, htmlLabel } from '../../../../Nodes/Node.js';
 
 type ResourceMap = { resources: string[]; borderColour?: string };
 
@@ -10,18 +10,19 @@ const flattenResources = (resources: ResourceMap[]): string[] => {
 
 const findInResources = (
   items: ResourceMap[],
-  resourceToFind: string
+  resourceToFind: string,
 ): ResourceMap | undefined => {
   return items.find((item) => item.resources.includes(resourceToFind));
 };
 
 export const groupResources = (
   groupableResources: ResourceMap[],
-  defaultBorderColour = "#666666"
+  defaultBorderColour = '#666666',
 ): NodeModifier<NodeWithParent> => ({
   describe: () => `aws.${groupResources.name}`,
   match: Matcher.node.resourceEquals(flattenResources(groupableResources)),
   modify: (nodeName, node, graph) => {
+    // biome-ignore lint/style/noNonNullAssertion: <explanation>
     if (flattenResources(groupableResources).includes(node.meta!.resource)) {
       // get all nodes and put in a subgraph
       const _successors = graph.successors(nodeName) ?? [];
@@ -38,6 +39,7 @@ export const groupResources = (
 
         // set compound so edge joins to cluster
         graph.setGraph({
+          // biome-ignore lint/suspicious/noExplicitAny: <explanation>
           ...(graph.graph() as unknown as Record<string, any>),
           compound: true,
         });
@@ -50,25 +52,31 @@ export const groupResources = (
           parent: { ...node.parent },
           peripheries: 1,
           color:
+            // biome-ignore lint/style/noNonNullAssertion: <explanation>
             findInResources(groupableResources, node.meta!.resource)
               ?.borderColour ?? defaultBorderColour,
 
           // style: "dashed",
           label: htmlLabel(
+            // biome-ignore lint/style/noNonNullAssertion: <explanation>
             node.meta!.resource,
+            // biome-ignore lint/style/noNonNullAssertion: <explanation>
             node.meta!.name,
-            `resources/imgs/aws/group/${node.meta!.resource}_40x40.png`
+            `resources/imgs/aws/group/${
+              // biome-ignore lint/style/noNonNullAssertion: <explanation>
+              node.meta!.resource
+            }_40x40.png`,
           ),
         });
 
         // set the nodes as children of the cluster
-        successors.forEach((successor) => {
+        for (const successor of successors) {
           graph.setParent(successor, `cluster_${nodeName}`);
-        });
+        }
 
         // reapply edges
         if (inEdges) {
-          inEdges.forEach((edge) => {
+          for (const edge of inEdges) {
             graph.setEdge(edge.v, successors[0], {
               lhead: `cluster_${nodeName}`,
             });
@@ -80,7 +88,7 @@ export const groupResources = (
             //   rankmode: "min",
             //   nodes: [edge.v, `cluster_${nodeName}`],
             // });
-          });
+          }
         }
       }
     }

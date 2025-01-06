@@ -1,13 +1,13 @@
-import { Matcher, NodeMatcher } from "../../../Nodes/Matcher.js";
-import { NodeModifier } from "../../../Nodes/Modifier.js";
-import { EdgeOptions, Node } from "../../../Nodes/Node.js";
+import { Matcher, NodeMatcher } from '../../../Nodes/Matcher.js';
+import { NodeModifier } from '../../../Nodes/Modifier.js';
+import { EdgeOptions, Node } from '../../../Nodes/Node.js';
 
 export const alignNodes = <NodeType extends Node>(
   matchers: {
     from: NodeMatcher<NodeType>;
     to: NodeMatcher<NodeType>;
   }[],
-  edgeOptions: EdgeOptions = {}
+  edgeOptions: EdgeOptions = {},
 ): NodeModifier<NodeType> => ({
   describe: () => alignNodes.name,
   match: Matcher.edge.fromTo(matchers),
@@ -26,7 +26,7 @@ export const alignNodes = <NodeType extends Node>(
             }
           }
           if (nodes.length > 1) {
-            graph.addRank({ rankmode: "same", nodes });
+            graph.addRank({ rankmode: 'same', nodes });
           }
         }
         break;

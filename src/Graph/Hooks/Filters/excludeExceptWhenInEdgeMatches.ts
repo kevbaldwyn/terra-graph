@@ -1,14 +1,14 @@
-import { NodeFilter } from "../../../Nodes/Filter.js";
-import { NodeMatcher } from "../../../Nodes/Matcher.js";
-import { NodeWithMeta } from "../../../Nodes/Node.js";
+import { NodeFilter } from '../../../Nodes/Filter.js';
+import { NodeMatcher } from '../../../Nodes/Matcher.js';
+import { NodeWithMeta } from '../../../Nodes/Node.js';
 
 export const excludeResourceExceptWhenInEdgeMatches = <
-  NodeType extends NodeWithMeta
+  NodeType extends NodeWithMeta,
 >(
   matchers: {
     node: NodeMatcher<NodeType>;
     in: NodeMatcher<NodeType>;
-  }[]
+  }[],
 ): NodeFilter<NodeType> => ({
   describe: () => excludeResourceExceptWhenInEdgeMatches.name,
   match: (nodeName, node, graph) => {

@@ -23,14 +23,14 @@ export interface EdgeOptions extends Record<string, string | undefined> {
   key?: string;
 }
 
-export const rootName = (label: string) => label.split(".")[0];
-export const leafName = (label: string) => label.split(".").pop() as string;
+export const rootName = (label: string) => label.split('.')[0];
+export const leafName = (label: string) => label.split('.').pop() as string;
 // export const moduleResource = (label: string) => label.split(".")[2];
 
 const htmlTableWithImage = (
   resource: string,
   name: string,
-  image: string
+  image: string,
 ) => `<<table align="left" border="0" cellpadding="0" cellspacing="0" cellborder="0">
   <tr>
     <td align="left" rowspan="2"><img src="${image}" /></td>
@@ -43,7 +43,7 @@ const htmlTableWithImage = (
 
 const htmlTablePlain = (
   resource: string,
-  name: string
+  name: string,
 ) => `<<table align="left" border="0" cellpadding="0" cellspacing="0" cellborder="0">
   <tr>
     <td align="left">${name}</td>

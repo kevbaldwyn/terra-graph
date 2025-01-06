@@ -1,10 +1,10 @@
-import { Graph as GraphLibGraph, GraphOptions } from "graphlib";
-import dot from "graphlib-dot";
-import { EdgeOptions, Node } from "../Nodes/Node.js";
-import { NodeFilter } from "../Nodes/Filter.js";
-import { NodeModifier } from "../Nodes/Modifier.js";
-import { Command } from "@oclif/core";
-import { NodeMatchError, NodeModifyError } from "../Nodes/NodeError.js";
+import { Command } from '@oclif/core';
+import { Graph as GraphLibGraph, GraphOptions } from 'graphlib';
+import dot from 'graphlib-dot';
+import { NodeFilter } from '../Nodes/Filter.js';
+import { NodeModifier } from '../Nodes/Modifier.js';
+import { EdgeOptions, Node } from '../Nodes/Node.js';
+import { NodeMatchError, NodeModifyError } from '../Nodes/NodeError.js';
 
 type Rank = {
   rankmode: string;
@@ -18,7 +18,7 @@ export class Graph extends GraphLibGraph {
     options?: GraphOptions,
     private ranks: Rank[] = [],
     private key: Key[] = [],
-    private description: Record<string, string> = {}
+    private description: Record<string, string> = {},
   ) {
     super(options);
   }
@@ -27,7 +27,7 @@ export class Graph extends GraphLibGraph {
     data: string,
     ranks?: Rank[],
     key?: Key[],
-    description?: Record<string, string>
+    description?: Record<string, string>,
   ): Graph {
     return Graph.fromGraphLib(dot.read(data), ranks, key, description);
   }
@@ -41,7 +41,7 @@ export class Graph extends GraphLibGraph {
       },
       graph.ranks,
       graph.key,
-      graph.description
+      graph.description,
     );
     Graph.assignProps(g, graph);
     g.setGraph(graph.graph());
@@ -53,7 +53,7 @@ export class Graph extends GraphLibGraph {
     graph: GraphLibGraph,
     ranks?: Rank[],
     key?: Key[],
-    description?: Record<string, string>
+    description?: Record<string, string>,
   ): Graph {
     const g = new Graph(
       {
@@ -63,7 +63,7 @@ export class Graph extends GraphLibGraph {
       },
       ranks ?? [],
       key ?? [],
-      description ?? {}
+      description ?? {},
     );
     g.setGraph(graph.graph());
 
@@ -81,12 +81,12 @@ export class Graph extends GraphLibGraph {
     }
   }
 
-  public filterNodes(filter: { (v: string): boolean }): Graph {
+  public filterNodes(filter: (v: string) => boolean): Graph {
     return Graph.fromGraphLib(
       super.filterNodes(filter),
       this.ranks,
       this.key,
-      this.description
+      this.description,
     );
   }
 
@@ -98,15 +98,15 @@ export class Graph extends GraphLibGraph {
       graphStart,
       `${graphStart}
       ${this.createKey()}
-      `
+      `,
     );
-    const lastBrace = newGraphString.lastIndexOf("}");
+    const lastBrace = newGraphString.lastIndexOf('}');
 
-    const append = [this.createRanks(), "}"];
+    const append = [this.createRanks(), '}'];
 
     return this.postProcessString(
       `${newGraphString.substring(0, lastBrace)}
-      ${append.join("\n")}`
+      ${append.join('\n')}`,
     );
   }
 
@@ -114,14 +114,14 @@ export class Graph extends GraphLibGraph {
     // post process this to remove quotes around html
     // match "<< and >>" and replace to just << and >>
     return graphString
-      .replaceAll('"<<', "<<")
-      .replaceAll('>>"', ">>")
+      .replaceAll('"<<', '<<')
+      .replaceAll('>>"', '>>')
       .replaceAll('\\"', '"');
   }
 
   private createKey() {
     if (this.key.length > 0 || this.description) {
-      const clusterName = "Key";
+      const clusterName = 'Key';
 
       return `
     subgraph "cluster_${clusterName}" {
@@ -139,13 +139,13 @@ export class Graph extends GraphLibGraph {
                     return `<tr>
                     <td align="left"><font point-size="10" color="#999999">${k}:</font></td>
                     <td align="left"><font point-size="10" color="#000000">&nbsp;&nbsp;&nbsp;${
-                      this.description![k]
+                      this.description?.[k]
                     }</font></td>
                   </tr>`;
                   })
-                  .join("")}
+                  .join('')}
               </table>>"];`
-          : ""
+          : ''
       }
       ${this.key
         .map((k, i) => {
@@ -153,17 +153,17 @@ export class Graph extends GraphLibGraph {
         "${clusterName}.A${i}" [label="" style="invis" height=0 width=0];
         "${clusterName}.B${i}" [label="" style="invis" height=0 width=0];
         "${clusterName}.A${i}" -> "${clusterName}.B${i}" [label="${
-            k.key
-          }" fontname="sans-serif" fontsize="10" ${Object.keys(k)
-            .map((kk) => `${kk}="${k[kk]}"`)
-            .join(" ")}];
+          k.key
+        }" fontname="sans-serif" fontsize="10" ${Object.keys(k)
+          .map((kk) => `${kk}="${k[kk]}"`)
+          .join(' ')}];
         ${
           this.description
             ? `"${clusterName}_description" -> "${clusterName}.A${i}" [style="invis"]`
-            : ""
+            : ''
         }`;
         })
-        .join("\n")}
+        .join('\n')}
     }
     subgraph cluster_padKey {
       style = "invis"
@@ -177,7 +177,7 @@ export class Graph extends GraphLibGraph {
     }
     `;
     }
-    return "";
+    return '';
   }
 
   private createRanks() {
@@ -186,27 +186,27 @@ export class Graph extends GraphLibGraph {
         .map((rank) => {
           return `  { rank = ${rank.rankmode}; ${rank.nodes
             .map((n) => `"${n}";`)
-            .join(" ")} }`;
+            .join(' ')} }`;
         })
-        .join("\n");
+        .join('\n');
     }
-    return "";
+    return '';
   }
 
   static assignProps(to: Graph, from: GraphLibGraph) {
-    from.nodes().forEach((entry) => {
+    for (const entry of from.nodes()) {
       const node = from.node(entry);
       const parent = from.parent(entry);
       to.setNode(entry, node);
       if (parent) {
         to.setParent(entry, parent);
       }
-    });
+    }
 
-    from.edges().forEach((entry) => {
+    for (const entry of from.edges()) {
       const edge = from.edge(entry);
       to.setEdge({ v: entry.v, w: entry.w, name: entry.name }, edge);
-    });
+    }
   }
 }
 
@@ -218,23 +218,23 @@ const logMessage = (prefix: string, msg: string, nodeName: string) => {
 export const filter = <NodeType extends Node>(
   graph: Graph,
   filters: NodeFilter<NodeType>[],
-  logger: Command["log"],
-  error: Command["error"]
+  logger: Command['log'],
+  error: Command['error'],
 ): Graph => {
   return graph.filterNodes((nodeName) => {
     const nodeObj = graph.node(nodeName);
     for (const filter of filters) {
       try {
         if (filter.match(nodeName, nodeObj, graph)) {
-          if (typeof filter.remove === "boolean") {
+          if (typeof filter.remove === 'boolean') {
             if (filter.remove) {
               if (filter.describe) {
                 logger(
                   logMessage(
-                    "filter:remove",
+                    'filter:remove',
                     filter.describe(nodeName, nodeObj),
-                    nodeName
-                  )
+                    nodeName,
+                  ),
                 );
               }
               return false;
@@ -244,10 +244,10 @@ export const filter = <NodeType extends Node>(
               if (filter.describe) {
                 logger(
                   logMessage(
-                    "filter:remove",
+                    'filter:remove',
                     filter.describe(nodeName, nodeObj),
-                    nodeName
-                  )
+                    nodeName,
+                  ),
                 );
               }
               return false;
@@ -265,26 +265,26 @@ export const filter = <NodeType extends Node>(
 export const decorate = <NodeType extends Node>(
   graph: Graph,
   modifiers: NodeModifier<NodeType>[],
-  logger: Command["log"],
-  error: Command["error"]
+  logger: Command['log'],
+  error: Command['error'],
 ) => {
   // copy the graph so we can immutability change it
   let _graph = Graph.fromGraph(graph);
 
   // for each modifier
-  modifiers.forEach((modifier) => {
+  for (const modifier of modifiers) {
     // iterate the nodes of the copy
-    _graph.nodes().forEach((nodeName) => {
+    for (const nodeName of _graph.nodes()) {
       const nodeObj = _graph.node(nodeName);
       try {
         if (modifier.match(nodeName, nodeObj, _graph)) {
           if (modifier.describe) {
             logger(
               logMessage(
-                "decorate:match",
+                'decorate:match',
                 modifier.describe(nodeName, nodeObj),
-                nodeName
-              )
+                nodeName,
+              ),
             );
           }
           try {
@@ -292,19 +292,20 @@ export const decorate = <NodeType extends Node>(
           } catch (e) {
             throw new NodeModifyError(
               { cause: e },
-              { nodeName, node: nodeObj }
+              { nodeName, node: nodeObj },
             );
           }
         }
       } catch (e) {
         if (!(e instanceof NodeModifyError)) {
+          // biome-ignore lint/suspicious/noCatchAssign: <explanation>
           e = new NodeMatchError({ cause: e }, { nodeName, node: nodeObj });
         }
         error(e as Error);
       }
-    });
+    }
 
     _graph = Graph.fromGraph(_graph);
-  });
+  }
   return _graph;
 };

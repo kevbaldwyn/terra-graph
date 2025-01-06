@@ -1,12 +1,12 @@
-import { NodeFilter } from "../../Nodes/Filter.js";
-import { NodeModifier } from "../../Nodes/Modifier.js";
-import { Node, NodeWithParent } from "../../Nodes/Node.js";
+import { NodeFilter } from '../../Nodes/Filter.js';
+import { NodeModifier } from '../../Nodes/Modifier.js';
+import { Node, NodeWithParent } from '../../Nodes/Node.js';
 
 export enum Hook {
-  META_BEFORE = "meta.before",
-  META_APPLY = "meta.apply",
-  GRAPH_FILTER = "graph.filter",
-  GRAPH_DECORATE = "graph.decorate",
+  META_BEFORE = 'meta.before',
+  META_APPLY = 'meta.apply',
+  GRAPH_FILTER = 'graph.filter',
+  GRAPH_DECORATE = 'graph.decorate',
 }
 
 export type HookMap = {
@@ -20,7 +20,7 @@ type Hooks = NodeModifier<Node> | NodeFilter<Node>;
 
 export const getHooks = <HookType = Hooks>(
   hookStep: Hook,
-  map: HookMap
+  map: HookMap,
 ): HookType[] => {
   // TODO: runtime guards validating hooks
   return map[hookStep] as HookType[];
@@ -50,7 +50,7 @@ export const extend = (source: HookMap, extension: HookMap): HookMap => {
 export const replace = <H extends Hook>(
   hook: H,
   map: HookMap,
-  newHooks: HookMap[H]
+  newHooks: HookMap[H],
 ): HookMap => {
   return {
     ...map,

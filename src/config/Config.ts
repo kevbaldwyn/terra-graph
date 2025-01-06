@@ -1,5 +1,5 @@
-import { HookMap } from "../Graph/Hooks/Hooks.js";
-import { Plugin } from "../Graph/Plugin.js";
+import { HookMap } from '../Graph/Hooks/Hooks.js';
+import { Plugin } from '../Graph/Plugin.js';
 
 interface Graph extends Record<string, unknown> {
   rankdir?: string;

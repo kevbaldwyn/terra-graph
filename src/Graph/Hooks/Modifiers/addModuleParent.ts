@@ -1,15 +1,14 @@
-import { NodeModifier } from "../../../Nodes/Modifier.js";
-import { Node } from "../../../Nodes/Node.js";
-import { Graph } from "../../Graph.js";
+import { NodeModifier } from '../../../Nodes/Modifier.js';
+import { Node } from '../../../Nodes/Node.js';
+import { Graph } from '../../Graph.js';
 
 export const addModuleParent = (): NodeModifier<Node> => ({
   describe: () => addModuleParent.name,
   match: (nodeName: string) => {
-    return nodeName.startsWith("cluster_module.");
+    return nodeName.startsWith('cluster_module.');
   },
   modify: (nodeName, node, graph: Graph) => {
-    // console.log(node);
-    graph.children(`cluster_${node.label}`).forEach((child: string) => {
+    for (const child of graph.children(`cluster_${node.label}`)) {
       const childNode = graph.node(child);
       childNode.parent = {
         nodeName: `cluster_${node.label}`,
@@ -17,6 +16,6 @@ export const addModuleParent = (): NodeModifier<Node> => ({
         label: node.label,
         isModule: true,
       };
-    });
+    }
   },
 });

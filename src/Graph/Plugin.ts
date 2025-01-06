@@ -1,8 +1,6 @@
-import { extend, getHooks, Hook, HookMap } from "./Hooks/Hooks.js";
+import { Hook, HookMap, extend, getHooks } from './Hooks/Hooks.js';
 
-export interface Plugin {
-  (): HookMap;
-}
+export type Plugin = () => HookMap;
 
 export const mergePlugins = (plugins: Plugin[]): HookMap => {
   const hooks: HookMap = {

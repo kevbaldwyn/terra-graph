@@ -1,17 +1,17 @@
-import { Command, Flags } from "@oclif/core";
-import { decorate, filter, Graph } from "../Graph/Graph.js";
-import { createInterface } from "readline";
-import core from "../config/hooks.core.js";
-import { extend, getHooks, Hook } from "../Graph/Hooks/Hooks.js";
-import { NodeFilter } from "../Nodes/Filter.js";
-import { Node, NodeWithParent } from "../Nodes/Node.js";
-import { NodeModifier } from "../Nodes/Modifier.js";
-import { exec, execSync } from "child_process";
-import defaultConfig from "../config/config.default.js";
-import path from "path";
-import { writeFileSync } from "fs";
-import { Config } from "../config/Config.js";
-import { mergePlugins } from "../Graph/Plugin.js";
+import { exec, execSync } from 'node:child_process';
+import { writeFileSync } from 'node:fs';
+import path from 'node:path';
+import { createInterface } from 'node:readline';
+import { Command, Flags } from '@oclif/core';
+import { Graph, decorate, filter } from '../Graph/Graph.js';
+import { Hook, extend, getHooks } from '../Graph/Hooks/Hooks.js';
+import { mergePlugins } from '../Graph/Plugin.js';
+import { NodeFilter } from '../Nodes/Filter.js';
+import { NodeModifier } from '../Nodes/Modifier.js';
+import { Node, NodeWithParent } from '../Nodes/Node.js';
+import { Config } from '../config/Config.js';
+import defaultConfig from '../config/config.default.js';
+import core from '../config/hooks.core.js';
 
 /**
  * NOTES:
@@ -25,25 +25,25 @@ import { mergePlugins } from "../Graph/Plugin.js";
 // TODO: pass a plan file to gain more context (edge direction / labels ie GIT PUT to S3 bucket)? / handle for_each / multiple instances
 
 export default class Create extends Command {
-  private stdin: string = "";
-  private static readonly defaultFileNameConvention = "terra-graph";
+  private stdin = '';
+  private static readonly defaultFileNameConvention = 'terra-graph';
 
-  static override description = "describe the command here";
-  static override examples = ["<%= config.bin %> <%= command.id %>"];
+  static override description = 'describe the command here';
+  static override examples = ['<%= config.bin %> <%= command.id %>'];
   static override flags = {
     configFile: Flags.string({
       required: false,
       default: `${Create.defaultFileNameConvention}.js`,
-      char: "c",
+      char: 'c',
     }),
     outFile: Flags.string({
       required: false,
-      char: "o",
+      char: 'o',
     }),
     outFormat: Flags.string({
       required: false,
-      default: "png",
-      char: "f",
+      default: 'png',
+      char: 'f',
     }),
     verbose: Flags.boolean({
       required: false,
@@ -57,15 +57,16 @@ export default class Create extends Command {
 
   async init() {
     try {
-      execSync("dot --version", { stdio: "pipe" });
+      execSync('dot --version', { stdio: 'pipe' });
+      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
     } catch (e: any) {
       this.error(
-        "command 'dot' not found, you probably need to install 'graphviz'"
+        "command 'dot' not found, you probably need to install 'graphviz'",
       );
     }
 
     const readStdin = async () => {
-      let data = ``;
+      let data = '';
       const rl = createInterface({
         input: process.stdin,
       });
@@ -78,7 +79,7 @@ export default class Create extends Command {
     this.stdin = await readStdin();
   }
 
-  private loggerFactory(verbose: boolean): Command["log"] {
+  private loggerFactory(verbose: boolean): Command['log'] {
     const logger = (message: string) => {
       this.log(message);
     };
@@ -88,7 +89,7 @@ export default class Create extends Command {
     return () => {};
   }
 
-  private errorFactory(continueOnError: boolean): Command["error"] {
+  private errorFactory(continueOnError: boolean): Command['error'] {
     const errorHandler = (error: Error) => {
       this.error(error);
     };
@@ -97,7 +98,7 @@ export default class Create extends Command {
     }
     return ((error: Error) => {
       console.error(error);
-    }) as Create["error"];
+    }) as Create['error'];
   }
 
   public async run(): Promise<void> {
@@ -109,7 +110,7 @@ export default class Create extends Command {
     logger(`reading config file: ${flags.configFile}`);
     const config = await this.getConfig(flags.configFile);
 
-    logger(`reading graph`);
+    logger('reading graph');
     const graph = Graph.fromString(this.stdin, [], [], config.description);
 
     // meta.before
@@ -119,11 +120,11 @@ export default class Create extends Command {
         graph,
         getHooks<NodeFilter<Node>>(Hook.META_BEFORE, core),
         logger,
-        errorHandler
+        errorHandler,
       ),
       getHooks<NodeFilter<Node>>(Hook.META_BEFORE, config.hooks),
       logger,
-      errorHandler
+      errorHandler,
     );
 
     // meta.apply
@@ -133,11 +134,11 @@ export default class Create extends Command {
         metaBefore,
         getHooks<NodeModifier<Node>>(Hook.META_APPLY, core),
         logger,
-        errorHandler
+        errorHandler,
       ),
       getHooks<NodeModifier<NodeWithParent>>(Hook.META_APPLY, config.hooks),
       logger,
-      errorHandler
+      errorHandler,
     );
 
     // graph.filter
@@ -147,11 +148,11 @@ export default class Create extends Command {
         metaApply,
         getHooks<NodeFilter<NodeWithParent>>(Hook.GRAPH_FILTER, core),
         logger,
-        errorHandler
+        errorHandler,
       ),
       getHooks<NodeFilter<NodeWithParent>>(Hook.GRAPH_FILTER, config.hooks),
       logger,
-      errorHandler
+      errorHandler,
     );
 
     // graph.decorate
@@ -161,23 +162,25 @@ export default class Create extends Command {
         graphFilter,
         getHooks<NodeModifier<NodeWithParent>>(Hook.GRAPH_DECORATE, core),
         logger,
-        errorHandler
+        errorHandler,
       ),
       getHooks<NodeModifier<NodeWithParent>>(Hook.GRAPH_DECORATE, config.hooks),
       logger,
-      errorHandler
+      errorHandler,
     );
 
+    // biome-ignore lint/style/noNonNullAssertion: <explanation>
     const rankdir = config.graph!.rankdir!;
     let ranksep = 2.5;
     let nodesep = 0.6;
-    if (["TB", "BT"].includes(rankdir)) {
+    if (['TB', 'BT'].includes(rankdir)) {
       nodesep = 2.5;
       ranksep = 0.6;
     }
 
     logger(`applying graph options: final node count: ${final.nodeCount()}`);
     final.setGraph({
+      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
       ...(final.graph() as unknown as Record<string, any>),
       rankdir,
       ranksep,
@@ -190,7 +193,7 @@ export default class Create extends Command {
       : `${Create.defaultFileNameConvention}.${flags.outFormat}`;
 
     logger(`writing ${outFileName}`);
-    if (flags.outFormat === "txt") {
+    if (flags.outFormat === 'txt') {
       writeFileSync(outFileName, final.toString());
     } else {
       exec(
@@ -201,14 +204,14 @@ export default class Create extends Command {
           if (error) {
             throw error;
           }
-        }
+        },
       );
     }
   }
 
   private async getConfig(
-    configFile: string
-  ): Promise<Pick<Config, "graph" | "hooks" | "description">> {
+    configFile: string,
+  ): Promise<Pick<Config, 'graph' | 'hooks' | 'description'>> {
     let config: Config;
     if (configFile) {
       // TODO: handle errors / invalid hookmap
