@@ -50,3 +50,5 @@ This will use the default settings to generate an image called `terra-graph.png`
 ```bash
 terra-graph [command] --help
 ```
+
+Comamnd docs can also be [found here](./COMMANDS.md)
