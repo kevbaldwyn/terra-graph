@@ -28,7 +28,8 @@ export default class Create extends Command {
   private stdin = '';
   private static readonly defaultFileNameConvention = 'terra-graph';
 
-  static override description = 'describe the command here';
+  static override description =
+    'Create a diagram from the output of `terraform graph`, output format, filename and configuration file can be supplied as arguments';
   static override examples = ['<%= config.bin %> <%= command.id %>'];
   static override flags = {
     configFile: Flags.string({
