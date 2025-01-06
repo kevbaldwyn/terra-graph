@@ -1160,7 +1160,31 @@
     proc-log "^5.0.0"
     which "^5.0.0"
 
-"@oclif/core@^4", "@oclif/core@^4.0.34", "@oclif/core@^4.2.0":
+"@oclif/core@^4", "@oclif/core@^4.2.0":
+  version "4.2.1"
+  resolved "https://registry.yarnpkg.com/@oclif/core/-/core-4.2.1.tgz#3ee038e89686d2ffe75bde63ae0091ca02cef353"
+  integrity sha512-oznLlFCXuOpRSfsBUv2YxNXwD0hZc4l37Vmue+1v6T1IgXD10DXNlGNxm20C24t7MgrXdvrbmnajTdzer3Xrbw==
+  dependencies:
+    ansi-escapes "^4.3.2"
+    ansis "^3.5.2"
+    clean-stack "^3.0.1"
+    cli-spinners "^2.9.2"
+    debug "^4.4.0"
+    ejs "^3.1.10"
+    get-package-type "^0.1.0"
+    globby "^11.1.0"
+    indent-string "^4.0.0"
+    is-wsl "^2.2.0"
+    lilconfig "^3.1.3"
+    minimatch "^9.0.5"
+    semver "^7.6.3"
+    string-width "^4.2.3"
+    supports-color "^8"
+    widest-line "^3.1.0"
+    wordwrap "^1.0.0"
+    wrap-ansi "^7.0.0"
+
+"@oclif/core@^4.0.34":
   version "4.2.0"
   resolved "https://registry.yarnpkg.com/@oclif/core/-/core-4.2.0.tgz#ab78b247dfd66322d9c9376ebaf3764e3c82fefe"
   integrity sha512-ETM2N/GL7W37Kv1Afv1j1Gh77CynS2ubEPP+p+MnjUXEjghNe7+bKAWhPkHnBuFAVFAqdv0qMpUAjxKLbsmbJw==
