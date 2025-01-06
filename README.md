@@ -43,7 +43,7 @@ Use the `terra-graph` `create` command to parse the graph, apply some default fo
 cat graph.txt | terra-graph create
 ```
 
-This will use the default settings to generate an image called `terra-graph.png` in the location you ran the command
+This will use the default settings to generate an image called `terra-graph.png` in the location you ran the command.
 
 ### Help
 
