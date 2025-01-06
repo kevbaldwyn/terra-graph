@@ -14,13 +14,13 @@ Auto-generated arhitecture diagrams from your terraform code.
 Install via npm:
 
 ```bash
-npm install -g kevbaldwyn/terra-graph
+npm install -g terra-graph
 ```
 
 Or yarn:
 
 ```bash
-yarn add -g kevbaldwyn/terra-graph
+yarn add -g terra-graph
 ```
 
 ## Basic Use
