@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/kevbaldwyn/terra-graph/compare/v1.0.0...v1.0.1) (2025-01-06)
+
+
+### Bug Fixes
+
+* force npm version bump ([5ed212b](https://github.com/kevbaldwyn/terra-graph/commit/5ed212b7cecb015f8a07ad9c149a434d3f05605c))
+
 # 1.0.0 (2025-01-06)
 
 
