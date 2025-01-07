@@ -64,7 +64,9 @@ export default {
 
 ### `hooks`
 
-`Object` - each key is a specific lifecycle hook with an `Array` of either [`NodeFilter`](../src/Nodes/Filter.ts) or [`NodeModifier`](../src/Nodes/Modifier.ts). See the [hooks documentation](./hooks.md) for more details. Each lifecycle key is optional.
+`Object` - each key is a specific lifecycle hook with an `Array` of either [`NodeFilter`](../src/Nodes/Filter.ts) or [`NodeModifier`](../src/Nodes/Modifier.ts).
+
+See the [hooks documentation](./hooks.md) for more details. Each lifecycle key is optional.
 
 #### Example
 

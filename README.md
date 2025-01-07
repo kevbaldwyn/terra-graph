@@ -51,8 +51,7 @@ This will use the default settings to generate an image called `terra-graph.png`
 terra-graph [command] --help
 ```
 
-Comamnd docs can also be [found here](./COMMANDS.md)
-
 ## Detailed Documentation
 
 - [Diagram Configuration](./docs/configuration.md) - how to filter nodes, change the appearance, create a description box etc.
+- [All terra-graph Commands](./docs/commands.md) - a list of all `terra-graph` commands
