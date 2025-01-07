@@ -44,12 +44,12 @@ export class Matcher {
   };
 
   static edge = {
-    fromTo: (
+    fromTo: <NodeType extends Node>(
       matchers: {
-        from: NodeMatchFn<boolean, Node>;
-        to: NodeMatchFn<boolean, Node>;
+        from: NodeMatchFn<boolean, NodeType>;
+        to: NodeMatchFn<boolean, NodeType>;
       }[],
-    ): NodeMatchFn<boolean, Node> => {
+    ): NodeMatchFn<boolean, NodeType> => {
       return (nodeName, node, graph) => {
         for (const matcher of matchers) {
           if (matcher.from(nodeName, node, graph)) {
