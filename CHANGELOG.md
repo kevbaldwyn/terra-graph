@@ -1,3 +1,10 @@
+## [1.0.3](https://github.com/kevbaldwyn/terra-graph/compare/v1.0.2...v1.0.3) (2025-01-07)
+
+
+### Bug Fixes
+
+* add type definitions ([a25154d](https://github.com/kevbaldwyn/terra-graph/commit/a25154dabc79e9e3fb1dbfb4ea90fe36a9e55fff))
+
 ## [1.0.2](https://github.com/kevbaldwyn/terra-graph/compare/v1.0.1...v1.0.2) (2025-01-06)
 
 
