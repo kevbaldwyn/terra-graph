@@ -20,7 +20,7 @@
     "build:ci": "tsc -p tsconfig.json",
     "lint": "biome check --write",
     "lint:ci": "biome check",
-    "oclif:readme": "oclif readme --readme-path=COMMANDS.md"
+    "oclif:readme": "oclif readme --readme-path=docs/commands.md"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",

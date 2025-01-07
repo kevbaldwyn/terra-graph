@@ -52,3 +52,7 @@ terra-graph [command] --help
 ```
 
 Comamnd docs can also be [found here](./COMMANDS.md)
+
+## Detailed Documentation
+
+- [Diagram Configuration](./docs/configuration.md) - how to filter nodes, change the appearance, create a description box etc.
