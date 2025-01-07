@@ -1,3 +1,10 @@
+## [1.0.5](https://github.com/kevbaldwyn/terra-graph/compare/v1.0.4...v1.0.5) (2025-01-07)
+
+
+### Bug Fixes
+
+* incorrect type export ([6b422e7](https://github.com/kevbaldwyn/terra-graph/commit/6b422e7f60255e7d69650da4f6236a5626506868))
+
 ## [1.0.4](https://github.com/kevbaldwyn/terra-graph/compare/v1.0.3...v1.0.4) (2025-01-07)
 
 
