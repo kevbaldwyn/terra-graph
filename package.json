@@ -8,7 +8,7 @@
     "type": "git",
     "url": "https://github.com/kevbaldwyn/terra-graph.git"
   },
-  "version": "1.0.3",
+  "version": "1.0.4",
   "type": "module",
   "types": "./dist/index.d.ts",
   "files": [

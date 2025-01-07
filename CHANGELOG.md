@@ -1,3 +1,11 @@
+## [1.0.4](https://github.com/kevbaldwyn/terra-graph/compare/v1.0.3...v1.0.4) (2025-01-07)
+
+
+### Bug Fixes
+
+* broken generic ([1e466e2](https://github.com/kevbaldwyn/terra-graph/commit/1e466e2d5b30a5a8ec447bcac5f0f6e5d782fbe4))
+* improve type definitions for Matchers ([8fccb8f](https://github.com/kevbaldwyn/terra-graph/commit/8fccb8f324a733c39869350afedb13eae09c1f0f))
+
 ## [1.0.3](https://github.com/kevbaldwyn/terra-graph/compare/v1.0.2...v1.0.3) (2025-01-07)
 
 
