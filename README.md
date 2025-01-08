@@ -54,4 +54,6 @@ terra-graph [command] --help
 ## Detailed Documentation
 
 - [Diagram Configuration](./docs/configuration.md) - how to filter nodes, change the appearance, create a description box etc.
+- [Hooks](./docs/hooks.md) - how to modify the diagram and filter elements using hooks, when and where to use them.
+  - [Matchers](./docs/matchers.md) - built-in node matchers, how to write custom matchers. Matchers are used to identify elements in the graph to either filter or modify.
 - [All terra-graph Commands](./docs/commands.md) - a list of all `terra-graph` commands
