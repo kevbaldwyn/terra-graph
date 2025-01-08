@@ -1,3 +1,10 @@
+## [1.0.6](https://github.com/kevbaldwyn/terra-graph/compare/v1.0.5...v1.0.6) (2025-01-08)
+
+
+### Bug Fixes
+
+* add missing defaultConfig export ([23dba59](https://github.com/kevbaldwyn/terra-graph/commit/23dba593e9315c7f45faeed335f8dde2220f945d))
+
 ## [1.0.5](https://github.com/kevbaldwyn/terra-graph/compare/v1.0.4...v1.0.5) (2025-01-07)
 
 
