@@ -11,7 +11,8 @@
     "ignore": [
       "./dist",
       "node_modules",
-      "terraform"
+      "terraform",
+      "./src/**/index.ts"
     ]
   },
   "linter": {
