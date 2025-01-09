@@ -9,15 +9,17 @@
     "url": "https://github.com/kevbaldwyn/terra-graph.git"
   },
   "version": "1.0.6",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "types": "./dist/esm/index.d.ts",
   "type": "module",
-  "types": "./dist/index.d.ts",
   "files": [
     "./dist/",
     "./resources/imgs/**/aws_*"
   ],
   "scripts": {
     "build": "(rm -r ./dist || true) && yarn lint && yarn build:ci",
-    "build:ci": "tsc -p tsconfig.json",
+    "build:ci": "tsc -p tsconfig.json && tsc -p tsconfig-commonjs.json",
     "lint": "biome check --write",
     "lint:ci": "biome check",
     "oclif:readme": "oclif readme --readme-path=docs/commands.md"
@@ -45,7 +47,7 @@
   },
   "oclif": {
     "bin": "terra-graph",
-    "commands": "./dist/commands",
+    "commands": "./dist/esm/commands",
     "dirname": "terra-graph",
     "topicSeparator": ":"
   },

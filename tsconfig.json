@@ -2,7 +2,7 @@
   "compilerOptions": {
     "declaration": true,
     "module": "Node16",
-    "outDir": "dist",
+    "outDir": "dist/esm",
     "rootDir": "src",
     "strict": true,
     "target": "es2022",
