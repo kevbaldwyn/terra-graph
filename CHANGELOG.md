@@ -1,3 +1,10 @@
+## [1.0.7](https://github.com/kevbaldwyn/terra-graph/compare/v1.0.6...v1.0.7) (2025-01-09)
+
+
+### Bug Fixes
+
+* publish both esm and cjs ([97f941c](https://github.com/kevbaldwyn/terra-graph/commit/97f941cedc6f43e050ef6c0386c1614575c4df64))
+
 ## [1.0.6](https://github.com/kevbaldwyn/terra-graph/compare/v1.0.5...v1.0.6) (2025-01-08)
 
 
