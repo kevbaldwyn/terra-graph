@@ -14,13 +14,21 @@ Auto-generated arhitecture diagrams from your terraform code.
 Install via npm:
 
 ```bash
+// globally
 npm install -g terra-graph
+
+// or add to your project
+npm install terra-graph
 ```
 
-Or yarn:
+Or globally via yarn:
 
 ```bash
-yarn add -g terra-graph
+// globally
+yarn global add terra-graph
+
+// or add to your project
+yarn add terra-graph
 ```
 
 ## Basic Use
