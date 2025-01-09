@@ -1,3 +1,10 @@
+## [1.0.8](https://github.com/kevbaldwyn/terra-graph/compare/v1.0.7...v1.0.8) (2025-01-09)
+
+
+### Bug Fixes
+
+* add global namespace to allow easy config ([516f726](https://github.com/kevbaldwyn/terra-graph/commit/516f7266ad4a3899e32462867f293fba36eae4eb))
+
 ## [1.0.7](https://github.com/kevbaldwyn/terra-graph/compare/v1.0.6...v1.0.7) (2025-01-09)
 
 
