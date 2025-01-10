@@ -12,7 +12,7 @@
       "./dist",
       "node_modules",
       "terraform",
-      "./src/**/index.ts"
+      "./src/globals.ts"
     ]
   },
   "linter": {

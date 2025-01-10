@@ -12,6 +12,7 @@ import { Node, NodeWithParent } from '../Nodes/Node.js';
 import { Config } from '../config/Config.js';
 import defaultConfig from '../config/config.default.js';
 import core from '../config/hooks.core.js';
+import '../globals.js';
 
 /**
  * NOTES:
@@ -121,7 +122,7 @@ export default class Create extends Command {
     const errorHandler = this.errorFactory(flags.continueOnError);
 
     logger(`reading config file: ${flags.configFile}`);
-    const config = await this.getConfig(flags.configFile);
+    const config = await this.getConfig(flags.configFile, errorHandler);
 
     logger('reading graph');
     const graph = Graph.fromString(this.stdin, [], [], config.description);
@@ -224,12 +225,14 @@ export default class Create extends Command {
 
   private async getConfig(
     configFile: string,
+    errorHandler: Command['error'],
   ): Promise<Pick<Config, 'graph' | 'hooks' | 'description'>> {
     let config: Config;
     if (configFile) {
       // TODO: handle errors / invalid hookmap
-      const userConfig = (await import(path.resolve(configFile)))
-        .default as Config;
+      const userConfig = (
+        await import(path.resolve(configFile)).catch((e) => errorHandler(e))
+      ).default as Config;
       config = {
         ...userConfig,
         graph: {
