@@ -1,7 +1,6 @@
 # Commands
   <!-- commands -->
-- [Commands](#commands)
-  - [`terra-graph create`](#terra-graph-create)
+* [`terra-graph create`](#terra-graph-create)
 
 ## `terra-graph create`
 
@@ -30,5 +29,5 @@ EXAMPLES
   $ terra-graph create -c path/to/config.js # provide a custom configuration file with your own rules for manipualting the graph
 ```
 
-_See code: [src/commands/create.ts](https://github.com/kevbaldwyn/terra-graph/blob/v1.0.2/src/commands/create.ts)_
+_See code: [src/commands/create.ts](https://github.com/kevbaldwyn/terra-graph/blob/v1.0.8/src/commands/create.ts)_
 <!-- commandsstop -->
