@@ -1,3 +1,15 @@
+# [1.1.0](https://github.com/kevbaldwyn/terra-graph/compare/v1.0.8...v1.1.0) (2025-01-10)
+
+
+### Bug Fixes
+
+* images not displaying ([145806e](https://github.com/kevbaldwyn/terra-graph/commit/145806edab97165a5ba820a3050cd22f27297fb8))
+
+
+### Features
+
+* introduce global TerraGraph variable available in config ([f90ff53](https://github.com/kevbaldwyn/terra-graph/commit/f90ff536cad2a82115c55342a161c29c7e840c10))
+
 ## [1.0.8](https://github.com/kevbaldwyn/terra-graph/compare/v1.0.7...v1.0.8) (2025-01-09)
 
 
