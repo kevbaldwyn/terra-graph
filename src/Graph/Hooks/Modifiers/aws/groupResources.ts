@@ -62,7 +62,7 @@ export const groupResources = (
             node.meta!.resource,
             // biome-ignore lint/style/noNonNullAssertion: <explanation>
             node.meta!.name,
-            `resources/imgs/aws/group/${
+            `${graph.getRootDir()}/resources/imgs/aws/group/${
               // biome-ignore lint/style/noNonNullAssertion: <explanation>
               node.meta!.resource
             }_40x40.png`,

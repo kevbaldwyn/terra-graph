@@ -9,12 +9,12 @@ export const singleResources = (): NodeModifier<NodeWithParent> => ({
     return node.meta?.resource.startsWith('aws_') ?? false;
   },
   modify: (nodeName, node, graph) => {
-    let img = `resources/imgs/aws/resource/${
+    let img = `${graph.getRootDir()}/resources/imgs/aws/resource/${
       // biome-ignore lint/style/noNonNullAssertion: <explanation>
       node.meta!.resource
     }.png`;
     if (!existsSync(path.resolve(img))) {
-      img = 'resources/imgs/aws/resource/aws_general.png';
+      img = `${graph.getRootDir()}/resources/imgs/aws/resource/aws_general.png`;
     }
     node.image = img;
     node.labelloc = 'b';

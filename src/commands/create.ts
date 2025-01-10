@@ -125,7 +125,13 @@ export default class Create extends Command {
     const config = await this.getConfig(flags.configFile, errorHandler);
 
     logger('reading graph');
-    const graph = Graph.fromString(this.stdin, [], [], config.description);
+    const graph = Graph.fromString(
+      this.stdin,
+      [],
+      [],
+      config.description,
+      this.config.root,
+    );
 
     // meta.before
     logger(`applying first filter: ${graph.nodeCount()} nodes`);

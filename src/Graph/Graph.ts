@@ -19,6 +19,7 @@ export class Graph extends GraphLibGraph {
     private ranks: Rank[] = [],
     private key: Key[] = [],
     private description: Record<string, string> = {},
+    private rootDir = '',
   ) {
     super(options);
   }
@@ -28,8 +29,9 @@ export class Graph extends GraphLibGraph {
     ranks?: Rank[],
     key?: Key[],
     description?: Record<string, string>,
+    rootDir?: string,
   ): Graph {
-    return Graph.fromGraphLib(dot.read(data), ranks, key, description);
+    return Graph.fromGraphLib(dot.read(data), ranks, key, description, rootDir);
   }
 
   static fromGraph(graph: Graph): Graph {
@@ -42,6 +44,7 @@ export class Graph extends GraphLibGraph {
       graph.ranks,
       graph.key,
       graph.description,
+      graph.rootDir,
     );
     Graph.assignProps(g, graph);
     g.setGraph(graph.graph());
@@ -54,6 +57,7 @@ export class Graph extends GraphLibGraph {
     ranks?: Rank[],
     key?: Key[],
     description?: Record<string, string>,
+    rootDir?: string,
   ): Graph {
     const g = new Graph(
       {
@@ -64,11 +68,16 @@ export class Graph extends GraphLibGraph {
       ranks ?? [],
       key ?? [],
       description ?? {},
+      rootDir ?? '',
     );
     g.setGraph(graph.graph());
 
     Graph.assignProps(g, graph);
     return g;
+  }
+
+  public getRootDir(): string {
+    return this.rootDir;
   }
 
   public addRank(rank: Rank) {
@@ -87,6 +96,7 @@ export class Graph extends GraphLibGraph {
       this.ranks,
       this.key,
       this.description,
+      this.rootDir,
     );
   }
 
