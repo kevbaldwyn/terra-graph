@@ -11,7 +11,7 @@ By default if you do not specify a config file terra-graph will look for a file 
 The configuration schema is as follows
 
 ```javascript
-export default {
+module.exports = {
   description: { // optional
     //key: "value", // any key: string pair
   },
@@ -38,7 +38,7 @@ export default {
 #### Example
 
 ```javascript
-export default {
+module.exports = {
   description: {
     Author: "Kevin Baldwyn",
     Created: new Date().toISOString(), // you can use any javascript you like to create the value
@@ -54,7 +54,7 @@ export default {
 #### Example
 
 ```javascript
-export default {
+module.exports = {
   graph: {
     pad: 5, // increase the whitespace around the diagram
     concentrate: true // if a node has more than one "in" edge try and concentrate them into one edge (potentially makes it more readable in the case of lots of edges)
@@ -71,9 +71,9 @@ See the [hooks documentation](./hooks.md) for more details. Each lifecycle key i
 #### Example
 
 ```javascript
-import { Matcher } from 'terra-graph';
+const { Matcher } = TerraGraph;
 
-export default {
+module.exports = {
   hooks: {
     // remove all `aws_cloudwatch_log_group` resources from the diagram
     'graph.filter': [{
@@ -96,7 +96,7 @@ The [`aws/S3`](../src/Graph/Plugins/aws/S3.ts) plugin removes nodes that are not
 ### Example (taken from the aws/S3 Plugin)
 
 ```javascript
-import { removeNodeAndRedirectRelationships, nodeToEdgeLabel } from 'terra-graph';
+const { removeNodeAndRedirectRelationships, nodeToEdgeLabel } = TerraGraph;
 
 const S3Plugin = () => ({
   'meta.apply': [
@@ -116,9 +116,42 @@ const S3Plugin = () => ({
   ],
 });
 
-export default {
+module.exports = {
   plugins: [
     S3Plugin, // make sure not to call the plugin - just reference it
   ]
 }
+```
+
+## A note on imports
+
+The configuration files used to configure it's behaviour are fully featured javascript files with access to many of `terra-graphs` internal modules.
+
+Becuase `terra-graph` is designed to be used as a standalone cli tool it's unlikely that it will be included as part of a package.json / other javascript / node project. This means the configuration files do not have access to import the modules exported by `terra-graph` (such as plugins and matchers) in the normal way (ie through an `import` statement).
+
+To overcome this and make it easy to simply write standalone configuration files that can live anywhere (ie alongside your terraform)) `terra-graph` exposes a global namespace `TerraGraph` that can be used to access it's core features.
+
+```javascript
+// TerraGraph is a global variable exposed internally to terra-graph which means when the cionfiguration is loaded it has access to these properties
+const { Hook, extend, ApiGateway, S3, defaultConfig } = TerraGraph;
+
+modules.exports = {
+  plugins: [ApiGateway, S3],
+  hooks: extend(defaultConfig.hooks, {
+    [Hook.META_BEFORE]: []
+  }
+};
+```
+
+If you are using `terrag-graph` as part of a normal javascript project and is is added to your package.json file then you can do this as normal hoever for most use-cases it's not possible.
+
+```javascript
+import { Hook, extend, ApiGateway, S3, defaultConfig } from 'terra-graph';
+
+export default {
+  plugins: [ApiGateway, S3],
+  hooks: extend(defaultConfig.hooks, {
+    [Hook.META_BEFORE]: []
+  }
+};
 ```
