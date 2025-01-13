@@ -7,3 +7,4 @@ src/config.*.ts
 src/config.*.js
 *.diagram.png
 tmp
+.terraform
