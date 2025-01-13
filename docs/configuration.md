@@ -129,7 +129,7 @@ The configuration files used to configure it's behaviour are fully featured java
 
 Becuase `terra-graph` is designed to be used as a standalone cli tool it's unlikely that it will be included as part of a package.json / other javascript / node project. This means the configuration files do not have access to import the modules exported by `terra-graph` (such as plugins and matchers) in the normal way (ie through an `import` statement).
 
-To overcome this and make it easy to simply write standalone configuration files that can live anywhere (ie alongside your terraform)) `terra-graph` exposes a global namespace `TerraGraph` that can be used to access it's core features.
+To overcome this and make it easy to simply write standalone configuration files that can live anywhere (ie alongside your terraform) `terra-graph` exposes a global namespace `TerraGraph` that can be used to access it's core features.
 
 ```javascript
 // TerraGraph is a global variable exposed internally to terra-graph which means when the cionfiguration is loaded it has access to these properties
@@ -143,7 +143,7 @@ modules.exports = {
 };
 ```
 
-If you are using `terrag-graph` as part of a normal javascript project and is is added to your package.json file then you can do this as normal hoever for most use-cases it's not possible.
+If you are using `terrag-graph` as part of a normal javascript project and it is added to your package.json file then you can do this as normal however for most use-cases it's not possible.
 
 ```javascript
 import { Hook, extend, ApiGateway, S3, defaultConfig } from 'terra-graph';

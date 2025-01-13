@@ -147,9 +147,9 @@ You can see them [here](../src/config/hooks.core.ts).
 Hooks can be configured in in the `hooks` field of the config:
 
 ```javascript
-import { Hook } from 'terra-graph';
+const { Hook } = TerraGraph;
 
-export default {
+module.exports = {
   hooks: {
     [Hook.META_BEFORE]: [],
     [Hook.META_APPLY]: [],
@@ -166,9 +166,9 @@ If you do not create a config file `terra-graph` will use some default hook conf
 You can either choose to completely override this by creating your own configuration file OR you can use the `extend` function to extend from these hooks in your own configuration (reccomended):
 
 ```javascript
-import { Hook, extend, defaultConfig } from "terra-graph";
+const { Hook, extend, defaultConfig } = TerraGraph;
 
-export default {
+module.exports {
   hooks: extend(defaultConfig.hooks, {
     [Hook.GRAPH_DECORATE]: [
       // my additional hooks
