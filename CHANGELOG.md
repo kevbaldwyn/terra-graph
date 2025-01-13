@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/kevbaldwyn/terra-graph/compare/v1.1.0...v1.2.0) (2025-01-13)
+
+
+### Features
+
+* add command to generate the initial graph ([f307cd4](https://github.com/kevbaldwyn/terra-graph/commit/f307cd4dd5fb66f3749d9a31fa66d5f5ad3a1141))
+
 # [1.1.0](https://github.com/kevbaldwyn/terra-graph/compare/v1.0.8...v1.1.0) (2025-01-10)
 
 
