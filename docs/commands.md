@@ -1,6 +1,7 @@
 # Commands
   <!-- commands -->
 * [`terra-graph create`](#terra-graph-create)
+* [`terra-graph terraform:graph`](#terra-graph-terraformgraph)
 
 ## `terra-graph create`
 
@@ -30,4 +31,31 @@ EXAMPLES
 ```
 
 _See code: [src/commands/create.ts](https://github.com/kevbaldwyn/terra-graph/blob/v1.1.0/src/commands/create.ts)_
+
+## `terra-graph terraform:graph`
+
+Initialises terraform specifically for terra-graph and then runs `terraform graph`. This requires no credentials and will not affect any existing backend or state. Typically this should be executed before running `terra-graph create`
+
+```
+USAGE
+  $ terra-graph terraform:graph [-f <value>] [-s]
+
+FLAGS
+  -f, --backendFile=<value>  [default: terraform.tf] Provide the name of the file that contains your `backend {}`
+                             configuration (expected .tf extension). An "_override.tf" version will be created, allowing
+                             a brand new terra-graph only state file to be generated.
+  -s, --skipCleanup          By default terra-graph will delete the terra-graph.tfstate file after generating the
+                             initial terraform graph. This flag will skip this behaviour.
+
+DESCRIPTION
+  Initialises terraform specifically for terra-graph and then runs `terraform graph`. This requires no credentials and
+  will not affect any existing backend or state. Typically this should be executed before running `terra-graph create`
+
+EXAMPLES
+  $ terra-graph terraform:graph --backendFile=backend.tf
+
+  $ terra-graph terraform:graph --skipCleanup
+```
+
+_See code: [src/commands/terraform/graph.ts](https://github.com/kevbaldwyn/terra-graph/blob/v1.1.0/src/commands/terraform/graph.ts)_
 <!-- commandsstop -->
