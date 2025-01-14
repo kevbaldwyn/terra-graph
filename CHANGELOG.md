@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/kevbaldwyn/terra-graph/compare/v1.2.0...v1.2.1) (2025-01-14)
+
+
+### Bug Fixes
+
+* dont check for graphiz ([ede45f5](https://github.com/kevbaldwyn/terra-graph/commit/ede45f57832a180bdfce5e6b062383911df5323c))
+
 # [1.2.0](https://github.com/kevbaldwyn/terra-graph/compare/v1.1.0...v1.2.0) (2025-01-13)
 
 
