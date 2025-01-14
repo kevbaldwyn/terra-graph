@@ -70,14 +70,14 @@ export default class Create extends Command {
   };
 
   async init() {
-    try {
-      execSync('dot --version', { stdio: 'pipe' });
-      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-    } catch (e: any) {
-      this.error(
-        "command 'dot' not found, you probably need to install 'graphviz'",
-      );
-    }
+    // try {
+    //   execSync('dot --version', { stdio: 'pipe' });
+    //   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+    // } catch (e: any) {
+    //   this.error(
+    //     "command 'dot' not found, you probably need to install 'graphviz'",
+    //   );
+    // }
 
     const readStdin = async () => {
       let data = '';
