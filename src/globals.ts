@@ -16,6 +16,7 @@ import {
 	styleEdge,
 } from "./Graph/Hooks/Modifiers/index.js";
 import { Hook, extend } from "./Graph/Hooks/index.js";
+import { Matcher } from "./Nodes/Matcher.js";
 import {
 	ApiGateway,
 	S3,
@@ -29,6 +30,7 @@ declare global {
 	var TerraGraph: {
 		defaultConfig: typeof import("./config/config.default.js").default;
 		Hook: typeof import("./Graph/Hooks/index.js").Hook;
+		Matcher: typeof import("./Nodes/Matcher.js").Matcher;
 		extend: typeof import("./Graph/Hooks/index.js").extend;
 		excludeResourceExceptWhenInEdgeMatches: typeof import("./Graph/Hooks/Filters/index.js").excludeResourceExceptWhenInEdgeMatches;
 		groupResources: typeof import("./Graph/Hooks/Modifiers/aws/index.js").groupResources;
@@ -53,6 +55,7 @@ declare global {
 global.TerraGraph = {
 	defaultConfig,
 	Hook,
+	Matcher,
 	extend,
 	excludeResourceExceptWhenInEdgeMatches,
 	groupResources,
