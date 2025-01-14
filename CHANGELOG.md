@@ -1,3 +1,10 @@
+## [1.2.2](https://github.com/kevbaldwyn/terra-graph/compare/v1.2.1...v1.2.2) (2025-01-14)
+
+
+### Bug Fixes
+
+* add missing Matcher to globals ([926de1d](https://github.com/kevbaldwyn/terra-graph/commit/926de1d076cad1f32f09bdade854b4afa07aa945))
+
 ## [1.2.1](https://github.com/kevbaldwyn/terra-graph/compare/v1.2.0...v1.2.1) (2025-01-14)
 
 
