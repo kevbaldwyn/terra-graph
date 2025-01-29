@@ -8,7 +8,7 @@
     "type": "git",
     "url": "https://github.com/kevbaldwyn/terra-graph.git"
   },
-  "version": "1.2.2",
+  "version": "1.2.3",
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
   "types": "./dist/esm/index.d.ts",

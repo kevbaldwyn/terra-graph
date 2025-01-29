@@ -1,3 +1,10 @@
+## [1.2.3](https://github.com/kevbaldwyn/terra-graph/compare/v1.2.2...v1.2.3) (2025-01-29)
+
+
+### Bug Fixes
+
+* error generating key ([e9e4e36](https://github.com/kevbaldwyn/terra-graph/commit/e9e4e3635d796f3aee4ee69fa931c97f85d87c71))
+
 ## [1.2.2](https://github.com/kevbaldwyn/terra-graph/compare/v1.2.1...v1.2.2) (2025-01-14)
 
 
