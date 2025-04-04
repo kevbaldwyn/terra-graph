@@ -54,6 +54,7 @@ const config: Config = {
           to: Matcher.node.resourceOrNodeNameEquals([
             'aws_cloudwatch_event_rule',
             'aws_cloudwatch_event_archive',
+            'aws_schemas_discoverer',
           ]),
         },
       ]),
