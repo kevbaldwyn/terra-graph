@@ -1,3 +1,10 @@
+## [1.2.4](https://github.com/kevbaldwyn/terra-graph/compare/v1.2.3...v1.2.4) (2025-04-04)
+
+
+### Bug Fixes
+
+* add default relationship for aws_schemas_discoverer on an eventbus ([2da9f8b](https://github.com/kevbaldwyn/terra-graph/commit/2da9f8b6e9082309ca467c96147172bb2819f8e8))
+
 ## [1.2.3](https://github.com/kevbaldwyn/terra-graph/compare/v1.2.2...v1.2.3) (2025-01-29)
 
 
