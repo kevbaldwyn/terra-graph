@@ -1,3 +1,15 @@
+# [1.3.0](https://github.com/kevbaldwyn/terra-graph/compare/v1.2.4...v1.3.0) (2025-06-17)
+
+
+### Bug Fixes
+
+* correct label names when modules are used ([fd40495](https://github.com/kevbaldwyn/terra-graph/commit/fd4049509a54a8841d98c98ff3078b4a7185868e))
+
+
+### Features
+
+* add aws SNS plugin ([761f499](https://github.com/kevbaldwyn/terra-graph/commit/761f4996f4084ddfc0cf6fe923f89c0758a6341e))
+
 ## [1.2.4](https://github.com/kevbaldwyn/terra-graph/compare/v1.2.3...v1.2.4) (2025-04-04)
 
 
