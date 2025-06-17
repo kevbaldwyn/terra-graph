@@ -30,7 +30,7 @@ EXAMPLES
   $ terra-graph create -c path/to/config.js # provide a custom configuration file with your own rules for manipualting the graph
 ```
 
-_See code: [src/commands/create.ts](https://github.com/kevbaldwyn/terra-graph/blob/v1.2.3/src/commands/create.ts)_
+_See code: [src/commands/create.ts](https://github.com/kevbaldwyn/terra-graph/blob/v1.2.4/src/commands/create.ts)_
 
 ## `terra-graph terraform:graph`
 
@@ -57,5 +57,5 @@ EXAMPLES
   $ terra-graph terraform:graph --skipCleanup
 ```
 
-_See code: [src/commands/terraform/graph.ts](https://github.com/kevbaldwyn/terra-graph/blob/v1.2.3/src/commands/terraform/graph.ts)_
+_See code: [src/commands/terraform/graph.ts](https://github.com/kevbaldwyn/terra-graph/blob/v1.2.4/src/commands/terraform/graph.ts)_
 <!-- commandsstop -->
