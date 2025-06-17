@@ -1,3 +1,10 @@
+## [1.3.2](https://github.com/kevbaldwyn/terra-graph/compare/v1.3.1...v1.3.2) (2025-06-17)
+
+
+### Bug Fixes
+
+* add missing global export for SNS ([1017943](https://github.com/kevbaldwyn/terra-graph/commit/1017943e3d401d7cea61b89427c38d3d30889cd7))
+
 ## [1.3.1](https://github.com/kevbaldwyn/terra-graph/compare/v1.3.0...v1.3.1) (2025-06-17)
 
 
