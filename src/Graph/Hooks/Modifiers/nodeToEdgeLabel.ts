@@ -20,8 +20,10 @@ export const nodeToEdgeLabel = <NodeType extends NodeWithMeta>(
       for (const edge of edges) {
         graph.removeEdge(edge);
       }
+
+      const labelNode = graph.node(edges[0].w);
       graph.setEdge(edges[0].v, edges[1].w, {
-        label: htmlLabel(rootName(edges[0].w), leafName(edges[0].w)),
+        label: htmlLabel(rootName(labelNode), leafName(labelNode)),
         fontname: 'sans-serif',
         fontsize: '10pt',
       });

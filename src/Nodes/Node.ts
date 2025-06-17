@@ -1,3 +1,5 @@
+import { Graph } from '../Graph/Graph.js';
+
 // TODO: list the DOT Language attributes here
 export interface Node extends Record<string, unknown> {
   shape: string;
@@ -23,8 +25,35 @@ export interface EdgeOptions extends Record<string, string | undefined> {
   key?: string;
 }
 
-export const rootName = (label: string) => label.split('.')[0];
-export const leafName = (label: string) => label.split('.').pop() as string;
+export const rootName = (label: string | NodeWithParent): string => {
+  if (
+    typeof label === 'object' &&
+    label !== null &&
+    'meta' in label &&
+    label.meta &&
+    typeof label.meta.resource === 'string'
+  ) {
+    return label.meta.resource;
+  }
+  if (typeof label === 'string') {
+    return label.split('.')[0];
+  }
+  return '';
+};
+
+export const leafName = (label: string | NodeWithParent): string => {
+  if (typeof label === 'object' && label !== null && 'parent' in label) {
+    // biome-ignore lint/style/noNonNullAssertion: <explanation>
+    return label.parent!.label.split('.')[1];
+  }
+
+  if (typeof label === 'object' && label !== null) {
+    return label.meta?.name ?? '';
+  }
+
+  return String(label).split('.').pop() as string;
+};
+
 // export const moduleResource = (label: string) => label.split(".")[2];
 
 const htmlTableWithImage = (
