@@ -1,3 +1,10 @@
+## [1.3.1](https://github.com/kevbaldwyn/terra-graph/compare/v1.3.0...v1.3.1) (2025-06-17)
+
+
+### Bug Fixes
+
+* add missing aws_sns_topic image ([4c27f37](https://github.com/kevbaldwyn/terra-graph/commit/4c27f37b5fbd2a40df00884682b5965a8f671e6d))
+
 # [1.3.0](https://github.com/kevbaldwyn/terra-graph/compare/v1.2.4...v1.3.0) (2025-06-17)
 
 
