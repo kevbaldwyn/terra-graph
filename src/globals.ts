@@ -20,6 +20,7 @@ import { Matcher } from "./Nodes/Matcher.js";
 import {
 	ApiGateway,
 	S3,
+	SNS,
 	TransferFamily,
 	TrendMicroCloudFormationStack,
 } from "./Graph/Plugins/aws/index.js";
@@ -47,6 +48,7 @@ declare global {
 		styleEdge: typeof import("./Graph/Hooks/Modifiers/index.js").styleEdge;
 		ApiGateway: typeof import("./Graph/Plugins/aws/index.js").ApiGateway;
 		S3: typeof import("./Graph/Plugins/aws/index.js").S3;
+		SNS: typeof import("./Graph/Plugins/aws/index.js").SNS;
 		TransferFamily: typeof import("./Graph/Plugins/aws/index.js").TransferFamily;
 		TrendMicroCloudFormationStack: typeof import("./Graph/Plugins/aws/index.js").TrendMicroCloudFormationStack;
 	};
@@ -72,6 +74,7 @@ global.TerraGraph = {
 	styleEdge,
 	ApiGateway,
 	S3,
+	SNS,
 	TransferFamily,
 	TrendMicroCloudFormationStack,
 };
