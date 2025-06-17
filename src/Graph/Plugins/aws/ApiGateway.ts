@@ -44,7 +44,9 @@ export const ApiGateway: Plugin = () => ({
 
         // generate a name describing the path
         const originalNode = graph.node(toRemove[0]);
-        const newNodeLabel = toRemove.map((n) => leafName(graph.node(n))).join('/');
+        const newNodeLabel = toRemove
+          .map((n) => leafName(graph.node(n)))
+          .join('/');
         const newNodeName = `aws_api_gateway_resource.${newNodeLabel}`;
 
         // create new node
