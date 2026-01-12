@@ -53,10 +53,24 @@
   },
   "release": {
     "branches": [
-      "main"
+      "main",
+      {
+        "name": "rc/*",
+        "prerelease": "rc"
+      },
+      {
+        "name": "1.x",
+        "range": "1.x",
+        "channel": "1.x"
+      }
     ],
     "plugins": [
-      "@semantic-release/commit-analyzer",
+      [
+        "@semantic-release/commit-analyzer",
+        {
+          "preset": "conventionalcommits"
+        }
+      ],
       "@semantic-release/release-notes-generator",
       [
         "@semantic-release/changelog",

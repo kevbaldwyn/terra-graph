@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main
+      - rc/*
+      - 1.x
 
 jobs:
   release-npm:
