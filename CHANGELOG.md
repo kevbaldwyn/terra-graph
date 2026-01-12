@@ -1,3 +1,10 @@
+## [1.3.3](https://github.com/kevbaldwyn/terra-graph/compare/v1.3.2...v1.3.3) (2026-01-12)
+
+
+### Bug Fixes
+
+* update license to Apache 2.0 ([545c0d8](https://github.com/kevbaldwyn/terra-graph/commit/545c0d8021f2a53c6ecf7a140a7b7eda4ad4801a))
+
 ## [1.3.2](https://github.com/kevbaldwyn/terra-graph/compare/v1.3.1...v1.3.2) (2025-06-17)
 
 
