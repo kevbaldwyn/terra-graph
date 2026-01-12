@@ -13,6 +13,11 @@ type Rank = {
 
 type Key = EdgeOptions;
 
+// This is in fact a GraphLib representation of the graph (DOT specific)
+
+// TODO: create an importer / transformer that reads the DOT format into an internal representation (might be GraphLib based or not)
+// TODO: create an internal representation of the graph that is independent of GraphLib
+// TODO: create mappers / converters between internal representation and GraphLib / other representations
 export class Graph extends GraphLibGraph {
   constructor(
     options?: GraphOptions,
