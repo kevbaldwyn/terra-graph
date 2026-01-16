@@ -8,3 +8,4 @@ src/config.*.js
 *.diagram.png
 tmp
 .terraform
+coverage
