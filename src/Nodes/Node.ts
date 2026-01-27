@@ -1,4 +1,6 @@
-import { Graph } from '../Graph/Graph.js';
+// import { Graph } from '../Graph/Graph.js';
+
+// THIS FILE IS NOW ENTIRELY DOT / GRAPHVIZ / GraphLib specific
 
 // TODO: list the DOT Language attributes here
 export interface Node extends Record<string, unknown> {

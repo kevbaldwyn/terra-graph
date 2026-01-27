@@ -1,4 +1,4 @@
-import { TgGraph } from "./TgGraph.js";
+import { TgGraph } from './TgGraph.js';
 
 export interface Adapter {
   toTgGraph(): TgGraph;

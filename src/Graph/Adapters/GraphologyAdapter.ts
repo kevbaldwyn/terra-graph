@@ -1,6 +1,6 @@
 import type { AbstractGraph as Graphology } from 'graphology-types';
 import { DirectedGraph } from 'graphology';
-import { Operations } from '../Operations.js';
+import { Operations } from '../Operations/Operations.js';
 import {
   asNodeId,
   EdgeId,
@@ -21,10 +21,10 @@ export class GraphologyAdapter
   implements Adapter, Operations<TgNodeAttributes, TgEdgeAttributes>
 {
   public static fromTgGraph: AdapterFactory<GraphologyAdapter>['fromTgGraph'] =
-    (tg) => {
+    (tg: TgGraph) => {
       const graph = new DirectedGraph();
       const adapter = new GraphologyAdapter(graph);
-      return adapter.applyFromTgGraph(tg);
+      return adapter.fromTgGraph(tg);
     };
 
   constructor(private readonly graph: Graphology) {}
@@ -50,6 +50,10 @@ export class GraphologyAdapter
 
   public edgeTarget(edgeId: EdgeId): NodeId {
     return this.graph.target(edgeId) as NodeId;
+  }
+
+  public nodeIds(): NodeId[] {
+    return this.graph.nodes() as NodeId[];
   }
 
   public neighbors(nodeId: NodeId): NodeId[] {
@@ -126,7 +130,7 @@ export class GraphologyAdapter
     return legend;
   }
 
-  public applyFromTgGraph(tg: TgGraph): GraphologyAdapter {
+  public fromTgGraph(tg: TgGraph): GraphologyAdapter {
     return this.mutateGraph((graph) => {
       for (const node of Object.values(tg.nodes)) {
         graph.addNode(node.id, node);

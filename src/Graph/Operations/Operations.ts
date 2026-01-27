@@ -1,14 +1,15 @@
-import type { EdgeId, NodeId } from './TgGraph.js';
+import type { EdgeId, NodeId } from '../TgGraph.js';
 
 // Minimal traversal/mutation surface for hooks/plugins to depend on.
 export interface Operations<
-  NodeAttributes = Record<string, unknown>,
-  EdgeAttributes = Record<string, unknown>
+  NodeAttributes extends Record<string, unknown> = Record<string, unknown>,
+  EdgeAttributes extends Record<string, unknown> = Record<string, unknown>,
 > {
   getNodeAttributes(nodeId: NodeId): NodeAttributes | undefined;
   getEdgeAttributes(edgeId: EdgeId): EdgeAttributes;
   edgeSource(edgeId: EdgeId): NodeId;
   edgeTarget(edgeId: EdgeId): NodeId;
+  nodeIds(): NodeId[];
   neighbors(nodeId: NodeId): NodeId[];
   predecessors(nodeId: NodeId): NodeId[];
   successors(nodeId: NodeId): NodeId[];
@@ -29,3 +30,6 @@ export interface Operations<
   removeEdge(edgeId: EdgeId): Operations<NodeAttributes, EdgeAttributes>;
   getLegend(): EdgeId[];
 }
+
+// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+export type OperationsType = new (...args: any[]) => Operations;
