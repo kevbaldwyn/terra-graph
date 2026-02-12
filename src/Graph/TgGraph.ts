@@ -16,8 +16,15 @@ export type TgEdgeLegendAttribute = {
   // need to be explicit about styling fields? (for keys), or is that an Adapter specific thing?
 };
 
+export type TgEdgeRenderHints = {
+  resource: string;
+  name: string;
+};
+
 export interface TgEdgeAttributes extends Record<string, unknown> {
   legend?: TgEdgeLegendAttribute;
+  renderHints?: TgEdgeRenderHints;
+  adapter?: Record<string, Record<string, unknown>>;
 }
 
 export type TgEdge = {
@@ -34,10 +41,11 @@ export type TgEdge = {
 // };
 
 export type TgNode = {
-//   shape: string; I think this is a rendering concern
-//   fontname: string; this is a rendering concern
+  //   shape: string; I think this is a rendering concern
+  //   fontname: string; this is a rendering concern
   id: NodeId;
   label: string;
+  adapter?: Record<string, Record<string, unknown>>;
   meta?: {
     resource: string;
     name: string;
@@ -45,15 +53,16 @@ export type TgNode = {
   parent?: {
     id: NodeId;
     isModule: boolean;
+    nodeName?: string;
   };
 };
 export type TgNodeAttributes = Omit<TgNode, 'id'>;
 
 // Pure-data internal graph model that can be JSON serialized.
 export type TgGraph = {
-//   meta: TgGraphMeta; currently this is all DOT specific
-//   graph: TgGraphAttributes; DOT specific
-  nodes: Record<NodeId, TgNode>;
+  //   meta: TgGraphMeta; currently this is all DOT specific
+  //   graph: TgGraphAttributes; DOT specific
+  nodes: Record<string, TgNode>;
   // edges reference node ids to keep the model normalized.
   edges: TgEdge[];
   // ranks: TgGraphRank[]; are DOT-specific layout hints; omit from the core model for now.

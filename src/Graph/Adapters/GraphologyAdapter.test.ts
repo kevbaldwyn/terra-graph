@@ -1,6 +1,6 @@
-import { DirectedGraph, UndirectedGraph } from "graphology";
-import { GraphologyAdapter } from "./GraphologyAdapter.js";
-import { asNodeId, asEdgeId } from "../TgGraph.js";
+import { DirectedGraph, UndirectedGraph } from 'graphology';
+import { asEdgeId, asNodeId } from '../TgGraph.js';
+import { GraphologyAdapter } from './GraphologyAdapter.js';
 
 const buildGraphFixture = () => {
   const graph = new DirectedGraph();
@@ -58,7 +58,7 @@ describe('Operations interface', () => {
       const { graph, a } = buildGraphFixture();
       const adapter = new GraphologyAdapter(graph);
 
-    expect(adapter.getNodeAttributes(asNodeId('missing'))).toBeUndefined();
+      expect(adapter.getNodeAttributes(asNodeId('missing'))).toBeUndefined();
     });
   });
 

@@ -1,8 +1,8 @@
-import type { AbstractGraph as Graphology } from 'graphology-types';
 import { DirectedGraph } from 'graphology';
-import { Operations } from '../Operations/Operations.js';
+import type { AbstractGraph as Graphology } from 'graphology-types';
+import { Adapter, AdapterFactory } from '../Adapter.js';
+import { AdapterOperations } from '../Operations/Operations.js';
 import {
-  asNodeId,
   EdgeId,
   NodeId,
   TgEdge,
@@ -10,16 +10,14 @@ import {
   TgGraph,
   TgNode,
   TgNodeAttributes,
+  asNodeId,
 } from '../TgGraph.js';
-import { Adapter, AdapterFactory } from '../Adapter.js';
 
-enum GraphAttributeKey {
+export enum GraphAttributeKey {
   Description = 'tg:description',
 }
 
-export class GraphologyAdapter
-  implements Adapter, Operations<TgNodeAttributes, TgEdgeAttributes>
-{
+export class GraphologyAdapter implements AdapterOperations {
   public static fromTgGraph: AdapterFactory<GraphologyAdapter>['fromTgGraph'] =
     (tg: TgGraph) => {
       const graph = new DirectedGraph();
@@ -83,7 +81,7 @@ export class GraphologyAdapter
   public setNodeAttributes(
     nodeId: NodeId,
     attributes: TgNodeAttributes,
-  ): GraphologyAdapter {
+  ): this {
     return this.mutateGraph((graph) => {
       graph.mergeNode(nodeId, attributes);
     });
@@ -94,19 +92,19 @@ export class GraphologyAdapter
     source: NodeId,
     target: NodeId,
     attributes: TgEdgeAttributes,
-  ): GraphologyAdapter {
+  ): this {
     return this.mutateGraph((graph) => {
       graph.mergeEdgeWithKey(edgeId, source, target, attributes);
     });
   }
 
-  public removeNode(nodeId: NodeId): GraphologyAdapter {
+  public removeNode(nodeId: NodeId): this {
     return this.mutateGraph((graph) => {
       graph.dropNode(nodeId);
     });
   }
 
-  public removeEdge(edgeId: EdgeId): GraphologyAdapter {
+  public removeEdge(edgeId: EdgeId): this {
     return this.mutateGraph((graph) => {
       graph.dropEdge(edgeId);
     });
@@ -184,7 +182,7 @@ export class GraphologyAdapter
     };
   }
 
-  private readGraphAttribute<T>(key: string, fallback: T): T {
+  protected readGraphAttribute<T>(key: string, fallback: T): T {
     const value = this.graph.getAttribute(key);
     if (value !== undefined && value !== null) {
       return value as T;
@@ -193,9 +191,10 @@ export class GraphologyAdapter
     return (attrs[key] as T) ?? fallback;
   }
 
-  private mutateGraph(mutate: (graph: Graphology) => void): GraphologyAdapter {
+  protected mutateGraph(mutate: (graph: Graphology) => void): this {
     const nextGraph = this.getGraph();
     mutate(nextGraph);
-    return new GraphologyAdapter(nextGraph);
+    const Ctor = this.constructor as new (graph: Graphology) => this;
+    return new Ctor(nextGraph);
   }
 }

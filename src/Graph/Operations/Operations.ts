@@ -1,12 +1,15 @@
-import type { EdgeId, NodeId } from '../TgGraph.js';
+import type { Adapter } from '../Adapter.js';
+import type {
+  EdgeId,
+  NodeId,
+  TgEdgeAttributes,
+  TgNodeAttributes,
+} from '../TgGraph.js';
 
 // Minimal traversal/mutation surface for hooks/plugins to depend on.
-export interface Operations<
-  NodeAttributes extends Record<string, unknown> = Record<string, unknown>,
-  EdgeAttributes extends Record<string, unknown> = Record<string, unknown>,
-> {
-  getNodeAttributes(nodeId: NodeId): NodeAttributes | undefined;
-  getEdgeAttributes(edgeId: EdgeId): EdgeAttributes;
+export interface Operations {
+  getNodeAttributes(nodeId: NodeId): TgNodeAttributes | undefined;
+  getEdgeAttributes(edgeId: EdgeId): TgEdgeAttributes;
   edgeSource(edgeId: EdgeId): NodeId;
   edgeTarget(edgeId: EdgeId): NodeId;
   nodeIds(): NodeId[];
@@ -16,20 +19,19 @@ export interface Operations<
   inEdges(nodeId: NodeId): EdgeId[];
   outEdges(nodeId: NodeId): EdgeId[];
   edgesBetween(source: NodeId, target: NodeId): EdgeId[];
-  setNodeAttributes(
-    nodeId: NodeId,
-    attributes: NodeAttributes,
-  ): Operations<NodeAttributes, EdgeAttributes>;
+  setNodeAttributes(nodeId: NodeId, attributes: TgNodeAttributes): this;
   setEdge(
     edgeId: EdgeId,
     source: NodeId,
     target: NodeId,
-    attributes: EdgeAttributes,
-  ): Operations<NodeAttributes, EdgeAttributes>;
-  removeNode(nodeId: NodeId): Operations<NodeAttributes, EdgeAttributes>;
-  removeEdge(edgeId: EdgeId): Operations<NodeAttributes, EdgeAttributes>;
+    attributes: TgEdgeAttributes,
+  ): this;
+  removeNode(nodeId: NodeId): this;
+  removeEdge(edgeId: EdgeId): this;
   getLegend(): EdgeId[];
 }
+
+export type AdapterOperations = Adapter & Operations;
 
 // biome-ignore lint/suspicious/noExplicitAny: <explanation>
 export type OperationsType = new (...args: any[]) => Operations;

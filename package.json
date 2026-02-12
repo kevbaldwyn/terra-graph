@@ -50,7 +50,8 @@
   "dependencies": {
     "@oclif/core": "^4.0.34",
     "graphlib-dot": "^0.6.4",
-    "graphology": "^0.26.0"
+    "graphology": "^0.26.0",
+    "zod": "^3.24.1"
   },
   "bin": {
     "terra-graph": "./bin/run.js"

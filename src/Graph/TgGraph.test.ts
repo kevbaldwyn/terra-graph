@@ -1,12 +1,16 @@
-import { EdgeId, asEdgeId, edgeIdFrom, NodeId, asNodeId } from "./TgGraph.js";
+import { EdgeId, NodeId, asEdgeId, asNodeId, edgeIdFrom } from './TgGraph.js';
 
 describe('Test edgeIdFrom()', () => {
   it('should create expected id without suffix', () => {
-    expect(edgeIdFrom(asNodeId('from'), asNodeId('to'))).toStrictEqual('from:to');
+    expect(edgeIdFrom(asNodeId('from'), asNodeId('to'))).toStrictEqual(
+      'from:to',
+    );
   });
 
   it('should create expected id with suffix', () => {
-    expect(edgeIdFrom(asNodeId('from'), asNodeId('to'), 'suffix')).toStrictEqual('from:to:suffix');
+    expect(
+      edgeIdFrom(asNodeId('from'), asNodeId('to'), 'suffix'),
+    ).toStrictEqual('from:to:suffix');
   });
 });
 

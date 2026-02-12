@@ -1,28 +1,10 @@
 import { Adapter, AdapterFactory } from './Adapter.js';
-import { Hook } from './Hooks/Hooks.js';
 import { HookMatchError, HookModifyError } from './HookError.js';
-import { Operations } from './Operations/Operations.js';
-import { HookMap, NodeHook, getHooks } from './Operations/Hooks.js';
+import { Hook } from './Hooks/Hooks.js';
+import { HookMap, getHooks } from './Operations/Hooks.js';
+import { BaseHook } from './Operations/NodeHook.js';
+import { AdapterOperations } from './Operations/Operations.js';
 import { NodeId, TgGraph } from './TgGraph.js';
-
-type NodeAttributesOf<AdapterType> = AdapterType extends Operations<
-  infer NodeAttributes extends Record<string, unknown>,
-  infer _EdgeAttributes extends Record<string, unknown>
->
-  ? NodeAttributes
-  : Record<string, unknown>;
-
-type EdgeAttributesOf<AdapterType> = AdapterType extends Operations<
-  infer _NodeAttributes extends Record<string, unknown>,
-  infer EdgeAttributes extends Record<string, unknown>
->
-  ? EdgeAttributes
-  : Record<string, unknown>;
-
-type AdapterOperations<AdapterType> = Operations<
-  NodeAttributesOf<AdapterType>,
-  EdgeAttributesOf<AdapterType>
->;
 
 // TODO: better name not bound to hooks
 export type HookRunnerContext = {
@@ -31,27 +13,23 @@ export type HookRunnerContext = {
 };
 
 // export type GraphResolverInput<AdapterType extends Adapter & Operations> = {
-export type GraphResolverInput<
-  AdapterType extends Adapter &
-    Operations<Record<string, unknown>, Record<string, unknown>>,
-> = {
+export type GraphResolverInput<AdapterType extends AdapterOperations> = {
   graph: TgGraph;
   // hooks will be pre-solved,
   // the aim will be to have a set of hooks defined within a Profile
   // hooks could therfore be generic (any Operations/Adapter interface)
   // or apply only to specific Operations/Adapter interface
-  hooks: HookMap<NodeAttributesOf<AdapterType>, EdgeAttributesOf<AdapterType>>;
+  hooks: HookMap;
   // hooks: OperationsHookMap<AdapterType>;
   context?: HookRunnerContext;
 };
 
-export class GraphResolver<
-  AdapterType extends Adapter &
-    Operations<Record<string, unknown>, Record<string, unknown>>,
-> {
-  constructor(private readonly adapterFactory: AdapterFactory<AdapterType>) {}
+export class GraphResolver {
+  constructor(
+    private readonly adapterFactory: AdapterFactory<AdapterOperations>,
+  ) {}
 
-  resolve(input: GraphResolverInput<AdapterType>): AdapterType {
+  resolve(input: GraphResolverInput<AdapterOperations>): AdapterOperations {
     const hooks = input.hooks;
 
     let adapter = this.adapterFactory.fromTgGraph(input.graph);
@@ -124,26 +102,22 @@ export class GraphResolver<
   }
 
   private modify(
-    adapter: AdapterType,
-    hooks: NodeHook<
-      NodeAttributesOf<AdapterType>,
-      EdgeAttributesOf<AdapterType>
-    >[],
+    adapter: AdapterOperations,
+    hooks: BaseHook[],
     context?: HookRunnerContext,
     logPrefix: 'filter' | 'decorate' = 'decorate',
-  ): AdapterType {
+  ): AdapterOperations {
     let updated = adapter;
     const nodeIds = adapter.nodeIds();
 
     for (const nodeId of nodeIds) {
       for (const hook of hooks) {
-        const operations = this.asOperations(updated);
-        const node = operations.getNodeAttributes(nodeId);
+        const node = updated.getNodeAttributes(nodeId);
         if (!node) {
           break;
         }
         try {
-          if (hook.match(nodeId, node, operations)) {
+          if (hook.match(nodeId, node, updated)) {
             if (hook.describe) {
               this.log(
                 context,
@@ -155,10 +129,10 @@ export class GraphResolver<
               );
             }
             try {
-              const modified = hook.apply(nodeId, node, operations);
-              if (modified) {
-                updated = this.asAdapter(modified);
+              if (!hook.supports(updated)) {
+                continue;
               }
+              updated = hook.apply(nodeId, node, updated);
             } catch (e) {
               throw new HookModifyError(
                 { cause: e as Error },
@@ -205,21 +179,7 @@ export class GraphResolver<
     return ` -> [${prefix}][${msg}]: ${nodeName}`;
   }
 
-  private getHooks<HookStep extends Hook>(
-    hookStep: HookStep,
-    hooks: HookMap<
-      NodeAttributesOf<AdapterType>,
-      EdgeAttributesOf<AdapterType>
-    >,
-  ) {
+  private getHooks<HookStep extends Hook>(hookStep: HookStep, hooks: HookMap) {
     return getHooks(hookStep, hooks);
-  }
-
-  private asOperations(adapter: AdapterType): AdapterOperations<AdapterType> {
-    return adapter as unknown as AdapterOperations<AdapterType>;
-  }
-
-  private asAdapter(operations: AdapterOperations<AdapterType>): AdapterType {
-    return operations as unknown as AdapterType;
   }
 }

@@ -1,59 +1,46 @@
 import { Hook } from '../Hooks/Hooks.js';
-import { Operations } from './Operations.js';
-import { NodeId } from '../TgGraph.js';
+import { NodeId, TgNodeAttributes } from '../TgGraph.js';
+import { QueryDsl } from './Matchers/NodeQuery/QuerySchema.js';
+import { BaseHook } from './NodeHook.js';
+import { AdapterOperations } from './Operations.js';
 
-export type NodeMatchFn<
-  NodeAttributes extends Record<string, unknown> = Record<string, unknown>,
-  EdgeAttributes extends Record<string, unknown> = Record<string, unknown>,
-> = (
+// export { NodeHook } from './NodeHook.js';
+
+export type NodeModifyFn = (
   nodeId: NodeId,
-  node: NodeAttributes,
-  graph: Operations<NodeAttributes, EdgeAttributes>,
-) => boolean;
+  node: TgNodeAttributes,
+  graph: AdapterOperations,
+) => AdapterOperations;
 
-export type NodeModifyFn<
-  NodeAttributes extends Record<string, unknown> = Record<string, unknown>,
-  EdgeAttributes extends Record<string, unknown> = Record<string, unknown>,
-> = (
-  nodeId: NodeId,
-  node: NodeAttributes,
-  graph: Operations<NodeAttributes, EdgeAttributes>,
-) => Operations<NodeAttributes, EdgeAttributes>;
-
-export type NodeHook<
-  NodeAttributes extends Record<string, unknown> = Record<string, unknown>,
-  EdgeAttributes extends Record<string, unknown> = Record<string, unknown>,
-> = {
-  describe?: (nodeName: NodeId, node: NodeAttributes) => string;
-  match: NodeMatchFn<NodeAttributes, EdgeAttributes>;
-  apply: NodeModifyFn<NodeAttributes, EdgeAttributes>;
-  serialize: () => SerializedHook;
-};
-
-export type HookMap<
-  NodeAttributes extends Record<string, unknown> = Record<string, unknown>,
-  EdgeAttributes extends Record<string, unknown> = Record<string, unknown>,
-> = {
-  [Hook.META_BEFORE]?: NodeHook<NodeAttributes, EdgeAttributes>[];
-  [Hook.META_APPLY]?: NodeHook<NodeAttributes, EdgeAttributes>[];
-  [Hook.GRAPH_FILTER]?: NodeHook<NodeAttributes, EdgeAttributes>[];
-  [Hook.GRAPH_DECORATE]?: NodeHook<NodeAttributes, EdgeAttributes>[];
+export type HookMap = {
+  [Hook.META_BEFORE]?: BaseHook[];
+  [Hook.META_APPLY]?: BaseHook[];
+  [Hook.GRAPH_FILTER]?: BaseHook[];
+  [Hook.GRAPH_DECORATE]?: BaseHook[];
 };
 
 // TODO: revist hook life-cycle and what they are for and when to use them (and what they are called)
-type HookTypes<
-  NodeAttributes extends Record<string, unknown>,
-  EdgeAttributes extends Record<string, unknown>,
-> = {
-  [Hook.META_BEFORE]: NodeHook<NodeAttributes, EdgeAttributes>;
-  [Hook.META_APPLY]: NodeHook<NodeAttributes, EdgeAttributes>;
-  [Hook.GRAPH_FILTER]: NodeHook<NodeAttributes, EdgeAttributes>;
-  [Hook.GRAPH_DECORATE]: NodeHook<NodeAttributes, EdgeAttributes>;
+type HookTypes = {
+  [Hook.META_BEFORE]: BaseHook;
+  [Hook.META_APPLY]: BaseHook;
+  [Hook.GRAPH_FILTER]: BaseHook;
+  [Hook.GRAPH_DECORATE]: BaseHook;
 };
+
+export type NodeHookConfig = {
+  node: QueryDsl;
+  options?: Record<string, unknown>;
+};
+export type EdgeHookQuery = { from: QueryDsl; to: QueryDsl };
+export type EdgeHookConfig = {
+  edge: EdgeHookQuery;
+  options?: Record<string, unknown>;
+};
+export type HookConfig = NodeHookConfig | EdgeHookConfig;
 
 export type SerializedHook = {
   id: string;
-  config?: Record<string, unknown>;
+  config: HookConfig;
 };
 
 export type SerializedHookMap = {
@@ -63,21 +50,11 @@ export type SerializedHookMap = {
   [Hook.GRAPH_DECORATE]?: SerializedHook[];
 };
 
-export type Plugin<
-  NodeAttributes extends Record<string, unknown> = Record<string, unknown>,
-  EdgeAttributes extends Record<string, unknown> = Record<string, unknown>,
-> = () => HookMap<NodeAttributes, EdgeAttributes>;
+export type Plugin = () => HookMap;
 
-export const getHooks = <
-  HookStep extends Hook,
-  NodeAttributes extends Record<string, unknown> = Record<string, unknown>,
-  EdgeAttributes extends Record<string, unknown> = Record<string, unknown>,
->(
+export const getHooks = <HookStep extends Hook>(
   hookStep: HookStep,
-  map: HookMap<NodeAttributes, EdgeAttributes>,
-): HookTypes<NodeAttributes, EdgeAttributes>[HookStep][] => {
-  return (map[hookStep] ?? []) as HookTypes<
-    NodeAttributes,
-    EdgeAttributes
-  >[HookStep][];
+  map: HookMap,
+): HookTypes[HookStep][] => {
+  return (map[hookStep] ?? []) as HookTypes[HookStep][];
 };

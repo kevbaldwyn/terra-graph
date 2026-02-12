@@ -1,13 +1,12 @@
-import { GraphResolver, HookRunnerContext } from './GraphResolver.js';
 import { mock } from 'jest-mock-extended';
+import { GraphResolver, HookRunnerContext } from './GraphResolver.js';
 import { Hook } from './Hooks/Hooks.js';
-import { NodeId, TgNodeAttributes } from './TgGraph.js';
-import { Adapter } from './Adapter.js';
-import { Operations } from './Operations/Operations.js';
+import { BaseHook } from './Operations/NodeHook.js';
+import { AdapterOperations } from './Operations/Operations.js';
 
 describe('', () => {
   it('should', () => {
-    const adapter = mock<Adapter & Operations<TgNodeAttributes>>();
+    const adapter = mock<AdapterOperations>();
     adapter.nodeIds.mockReturnValue([]);
     // const adapter = new GraphologyAdapter(new Graph.DirectedGraph());
 
@@ -16,6 +15,10 @@ describe('', () => {
         return adapter;
       },
     });
+
+    // const hook = mock<NodeHook>();
+    // hook.apply.mockImplementation((_nodeId, _node, graph) => graph);
+    // hook.match.mockImplementation();
 
     const res = resolver.resolve({
       graph: {
@@ -26,18 +29,21 @@ describe('', () => {
       context: mock<HookRunnerContext>(),
       hooks: {
         [Hook.META_BEFORE]: [
-          // can be object or class
-          // should be a class only I think to allow easier identification
-          // for serialization
-          // how to enforce that?
-          {
-            match: (nodeId: NodeId, node, graph) => {
-              // node.label;
-              return graph.inEdges(nodeId).length > 0;
-            },
-            apply: (_nodeId, _node, graph) => graph,
-            serialize: () => ({ id: 'test-hook' }),
-          },
+          mock<BaseHook>(),
+          // new (class extends NodeHook {
+          //   public override match(nodeId: NodeId, node, graph) {
+          //     // node.label;
+          //     return graph.inEdges(nodeId).length > 0;
+          //   }
+
+          //   public override apply(_nodeId, _node, graph) {
+          //     return graph;
+          //   }
+
+          //   public override serialize() {
+          //     return { id: 'test-hook' };
+          //   }
+          // })(),
         ],
       },
     });
