@@ -1,9 +1,9 @@
 import { DirectedGraph } from 'graphology';
 import { GraphologyAdapter } from '../../Adapters/GraphologyAdapter.js';
-import { asEdgeId, asNodeId, TgGraph } from '../../TgGraph.js';
+import { TgGraph, asEdgeId, asNodeId } from '../../TgGraph.js';
 import { RemoveEdge } from './RemoveEdge.js';
 
-describe('RemoveEdge', () => {
+describe('RemoveEdge.apply', () => {
   it('shoud remove matching outbound edges', () => {
     const nodeA = asNodeId('node-a');
     const nodeB = asNodeId('node-b');

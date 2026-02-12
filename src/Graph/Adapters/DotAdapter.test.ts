@@ -1,8 +1,8 @@
 import { DirectedGraph } from 'graphology';
-import { DotAdapter } from './DotAdapter.js';
 import { asNodeId } from '../TgGraph.js';
+import { DotAdapter } from './DotAdapter.js';
 
-describe('DotAdapter', () => {
+describe('DotAdapter.addRank', () => {
   it('shoud add and return ranks', () => {
     const adapter = new DotAdapter(new DirectedGraph());
     const nodeA = asNodeId('node-a');
@@ -14,7 +14,9 @@ describe('DotAdapter', () => {
       { mode: 'same', nodes: [nodeA, nodeB] },
     ]);
   });
+});
 
+describe('DotAdapter.clearRanks', () => {
   it('shoud clear ranks', () => {
     const adapter = new DotAdapter(new DirectedGraph());
     const nodeA = asNodeId('node-a');

@@ -1,5 +1,5 @@
-import { GraphologyAdapter } from './GraphologyAdapter.js';
 import { NodeId } from '../TgGraph.js';
+import { GraphologyAdapter } from './GraphologyAdapter.js';
 
 type DotRank = {
   mode: 'same' | 'min' | 'max';

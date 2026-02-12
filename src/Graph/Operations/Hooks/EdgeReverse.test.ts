@@ -1,9 +1,9 @@
 import { DirectedGraph } from 'graphology';
 import { GraphologyAdapter } from '../../Adapters/GraphologyAdapter.js';
-import { asEdgeId, asNodeId, TgGraph } from '../../TgGraph.js';
+import { TgGraph, asEdgeId, asNodeId } from '../../TgGraph.js';
 import { EdgeReverse } from './EdgeReverse.js';
 
-describe('EdgeReverse', () => {
+describe('EdgeReverse.apply', () => {
   it('shoud reverse matching inbound edges', () => {
     const hook = new EdgeReverse({
       edge: {

@@ -1,6 +1,6 @@
 import { EdgeId, NodeId, asEdgeId, asNodeId, edgeIdFrom } from './TgGraph.js';
 
-describe('Test edgeIdFrom()', () => {
+describe('TgGraph.edgeIdFrom', () => {
   it('should create expected id without suffix', () => {
     expect(edgeIdFrom(asNodeId('from'), asNodeId('to'))).toStrictEqual(
       'from:to',
@@ -14,7 +14,7 @@ describe('Test edgeIdFrom()', () => {
   });
 });
 
-describe('Test asNodeId()', () => {
+describe('TgGraph.asNodeId', () => {
   it('should return the same string value, branded as a NodeId', () => {
     const id = asNodeId('node-1');
     expect(id).toBe('node-1');
@@ -22,7 +22,7 @@ describe('Test asNodeId()', () => {
   });
 });
 
-describe('Test asEdgeId()', () => {
+describe('TgGraph.asEdgeId', () => {
   it('should return the same string value, branded as an EdgeId', () => {
     const id = asEdgeId('edge-1');
     expect(id).toBe('edge-1');

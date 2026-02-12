@@ -1,8 +1,8 @@
-import { NodeId, TgNodeAttributes } from '../../TgGraph.js';
 import { DotAdapter } from '../../Adapters/DotAdapter.js';
+import { NodeId, TgNodeAttributes } from '../../TgGraph.js';
+import { NodeHookConfig } from '../Hooks.js';
 import { NodeHook } from '../NodeHook.js';
 import { AdapterOperations } from '../Operations.js';
-import { NodeHookConfig } from '../Hooks.js';
 
 export class NodeDotProperties extends NodeHook {
   // private static readonly defaultConfig: NodeHookConfig = {

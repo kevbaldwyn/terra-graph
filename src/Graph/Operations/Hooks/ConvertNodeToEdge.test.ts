@@ -1,9 +1,9 @@
 import { DirectedGraph } from 'graphology';
 import { GraphologyAdapter } from '../../Adapters/GraphologyAdapter.js';
-import { asEdgeId, asNodeId, edgeIdFrom, TgGraph } from '../../TgGraph.js';
+import { TgGraph, asEdgeId, asNodeId, edgeIdFrom } from '../../TgGraph.js';
 import { ConvertNodeToEdge } from './ConvertNodeToEdge.js';
 
-describe('ConvertNodeToEdge', () => {
+describe('ConvertNodeToEdge.apply', () => {
   it('shoud convert a node with a single in/out edge into a labeled edge', () => {
     const nodeA = asNodeId('node-a');
     const nodeB = asNodeId('node-b');

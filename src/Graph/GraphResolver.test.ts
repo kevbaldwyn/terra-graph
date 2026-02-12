@@ -4,8 +4,8 @@ import { Hook } from './Hooks/Hooks.js';
 import { BaseHook } from './Operations/NodeHook.js';
 import { AdapterOperations } from './Operations/Operations.js';
 
-describe('', () => {
-  it('should', () => {
+describe('GraphResolver.resolve', () => {
+  it('shoud resolve without hooks when there are no nodes', () => {
     const adapter = mock<AdapterOperations>();
     adapter.nodeIds.mockReturnValue([]);
     // const adapter = new GraphologyAdapter(new Graph.DirectedGraph());

@@ -1,5 +1,10 @@
 import { NodeId, TgNodeAttributes } from '../TgGraph.js';
-import { EdgeHookConfig, HookConfig, NodeHookConfig, SerializedHook } from './Hooks.js';
+import {
+  EdgeHookConfig,
+  HookConfig,
+  NodeHookConfig,
+  SerializedHook,
+} from './Hooks.js';
 import { NodeQuery } from './Matchers/NodeQuery/NodeQuery.js';
 import { AdapterOperations } from './Operations.js';
 

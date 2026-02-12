@@ -1,5 +1,5 @@
-import { NodeId, TgNodeAttributes } from '../../TgGraph.js';
 import { DotAdapter } from '../../Adapters/DotAdapter.js';
+import { NodeId, TgNodeAttributes } from '../../TgGraph.js';
 import { EdgeHook } from '../NodeHook.js';
 import { AdapterOperations } from '../Operations.js';
 

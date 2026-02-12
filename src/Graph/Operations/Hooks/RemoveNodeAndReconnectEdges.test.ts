@@ -1,9 +1,9 @@
 import { DirectedGraph } from 'graphology';
 import { GraphologyAdapter } from '../../Adapters/GraphologyAdapter.js';
-import { asEdgeId, asNodeId, TgGraph } from '../../TgGraph.js';
+import { TgGraph, asEdgeId, asNodeId } from '../../TgGraph.js';
 import { RemoveNodeAndReconnectEdges } from './RemoveNodeAndReconnectEdges.js';
 
-describe('RemoveNodeAndReconnectEdges', () => {
+describe('RemoveNodeAndReconnectEdges.apply', () => {
   it('shoud reconnect predecessors to successors and remove the node', () => {
     const nodeA = asNodeId('node-a');
     const nodeB = asNodeId('node-b');

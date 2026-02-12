@@ -1,9 +1,9 @@
 import { DirectedGraph } from 'graphology';
 import { GraphologyAdapter } from '../../Adapters/GraphologyAdapter.js';
-import { asNodeId, edgeIdFrom, TgGraph } from '../../TgGraph.js';
+import { TgGraph, asNodeId, edgeIdFrom } from '../../TgGraph.js';
 import { ExplicitEdge } from './ExplicitEdge.js';
 
-describe('ExplicitEdge', () => {
+describe('ExplicitEdge.apply', () => {
   it('shoud add edges from matching source nodes to matching target nodes', () => {
     const nodeA = asNodeId('node-a');
     const nodeB = asNodeId('node-b');

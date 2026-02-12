@@ -1,9 +1,9 @@
 import { mock } from 'jest-mock-extended';
+import { TgNodeAttributes, asNodeId } from '../../TgGraph.js';
 import { AdapterOperations } from '../Operations.js';
 import { AddModuleParent } from './AddModuleParent.js';
-import { TgNodeAttributes, asNodeId } from '../../TgGraph.js';
 
-describe('AddModuleParent', () => {
+describe('AddModuleParent.apply', () => {
   it('shoud set parent for nodes in the same module', () => {
     const hook = new AddModuleParent();
     const graph = mock<AdapterOperations>();
@@ -22,12 +22,7 @@ describe('AddModuleParent', () => {
       [otherId, { label: 'module.other.resource.one' }],
     ]);
 
-    graph.nodeIds.mockReturnValue([
-      moduleId,
-      childOneId,
-      childTwoId,
-      otherId,
-    ]);
+    graph.nodeIds.mockReturnValue([moduleId, childOneId, childTwoId, otherId]);
     graph.getNodeAttributes.mockImplementation((nodeId) =>
       nodes.get(String(nodeId)),
     );

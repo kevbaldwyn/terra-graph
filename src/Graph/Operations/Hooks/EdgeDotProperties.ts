@@ -1,8 +1,8 @@
-import { NodeId, TgNodeAttributes } from '../../TgGraph.js';
 import { DotAdapter } from '../../Adapters/DotAdapter.js';
+import { NodeId, TgNodeAttributes } from '../../TgGraph.js';
+import { EdgeHookConfig } from '../Hooks.js';
 import { EdgeHook } from '../NodeHook.js';
 import { AdapterOperations } from '../Operations.js';
-import { EdgeHookConfig } from '../Hooks.js';
 
 export class EdgeDotProperties extends EdgeHook {
   constructor(config: EdgeHookConfig) {

@@ -1,9 +1,9 @@
 import { DirectedGraph } from 'graphology';
 import { DotAdapter } from '../../Adapters/DotAdapter.js';
-import { asEdgeId, asNodeId, TgGraph } from '../../TgGraph.js';
+import { TgGraph, asEdgeId, asNodeId } from '../../TgGraph.js';
 import { AlignNodes } from './AlignNodes.js';
 
-describe('AlignNodes', () => {
+describe('AlignNodes.apply', () => {
   it('shoud add a rank and edge attributes for matching nodes', () => {
     const nodeA = asNodeId('node-a');
     const nodeB = asNodeId('node-b');

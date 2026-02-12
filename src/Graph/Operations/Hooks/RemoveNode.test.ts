@@ -1,9 +1,9 @@
 import { mock } from 'jest-mock-extended';
+import { TgNodeAttributes, asNodeId } from '../../TgGraph.js';
 import { AdapterOperations } from '../Operations.js';
 import { RemoveNode } from './RemoveNode.js';
-import { TgNodeAttributes, asNodeId } from '../../TgGraph.js';
 
-describe('RemoveNode', () => {
+describe('RemoveNode.apply', () => {
   it('shoud remove node when the query matches', () => {
     const hook = new RemoveNode({
       node: { attr: { key: 'label', eq: 'node-1' } },

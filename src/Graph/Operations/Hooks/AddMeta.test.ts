@@ -1,9 +1,9 @@
 import { mock } from 'jest-mock-extended';
+import { TgNodeAttributes, asNodeId } from '../../TgGraph.js';
 import { AdapterOperations } from '../Operations.js';
 import { AddMeta } from './AddMeta.js';
-import { TgNodeAttributes, asNodeId } from '../../TgGraph.js';
 
-describe('AddMeta', () => {
+describe('AddMeta.apply', () => {
   it('shoud add meta when the query matches', () => {
     const hook = new AddMeta({
       node: { attr: { key: 'label', eq: 'resource.name' } },

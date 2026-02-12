@@ -1,9 +1,9 @@
 import { DirectedGraph } from 'graphology';
 import { DotAdapter } from '../../Adapters/DotAdapter.js';
-import { asEdgeId, asNodeId, TgGraph } from '../../TgGraph.js';
+import { TgGraph, asEdgeId, asNodeId } from '../../TgGraph.js';
 import { EdgeDotProperties } from './EdgeDotProperties.js';
 
-describe('EdgeDotProperties', () => {
+describe('EdgeDotProperties.apply', () => {
   it('shoud store dot adapter options for matching edges', () => {
     const nodeA = asNodeId('node-a');
     const nodeB = asNodeId('node-b');

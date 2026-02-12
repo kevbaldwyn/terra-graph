@@ -78,10 +78,7 @@ export class GraphologyAdapter implements AdapterOperations {
     return this.graph.edges(source, target) as EdgeId[];
   }
 
-  public setNodeAttributes(
-    nodeId: NodeId,
-    attributes: TgNodeAttributes,
-  ): this {
+  public setNodeAttributes(nodeId: NodeId, attributes: TgNodeAttributes): this {
     return this.mutateGraph((graph) => {
       graph.mergeNode(nodeId, attributes);
     });
