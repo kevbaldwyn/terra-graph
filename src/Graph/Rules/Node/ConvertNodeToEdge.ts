@@ -1,8 +1,8 @@
 import { NodeId, TgNodeAttributes, edgeIdFrom } from '../../TgGraph.js';
-import { NodeHook } from '../NodeHook.js';
-import { AdapterOperations } from '../Operations.js';
+import { NodeRule } from '../Rule.js';
+import { AdapterOperations } from '../../Operations/Operations.js';
 
-export class ConvertNodeToEdge extends NodeHook {
+export class ConvertNodeToEdge extends NodeRule {
   public override apply(
     nodeId: NodeId,
     node: TgNodeAttributes,
@@ -37,4 +37,4 @@ export class ConvertNodeToEdge extends NodeHook {
   }
 }
 
-NodeHook.register(ConvertNodeToEdge);
+NodeRule.register(ConvertNodeToEdge);

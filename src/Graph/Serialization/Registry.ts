@@ -1,15 +1,15 @@
-import { SerializedHook } from '../Operations/Hooks.js';
-import { BaseHook } from '../Operations/NodeHook.js';
+import { SerializedRule } from '../Rules/RuleConfig.js';
+import { BaseRule } from '../Rules/Rule.js';
 import { OperationsType } from '../Operations/Operations.js';
 
-// TODO: refine hook serialization:
+// TODO: refine rule serialization:
 // - do nested matchers serialize cleanly (id -> query)?
 // - can we avoid hardcoded registry wiring?
 
 // TODO: registry persistence?
-export type HookRegistry = Record<
+export type RuleRegistry = Record<
   string,
-  (config: SerializedHook['config']) => BaseHook
+  (config: SerializedRule['config']) => BaseRule
 >;
 
 export type OperationsTypeRegistry = Record<string, OperationsType>;

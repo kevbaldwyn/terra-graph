@@ -1,6 +1,6 @@
 import { mock } from 'jest-mock-extended';
 import { TgNodeAttributes, asNodeId } from '../../TgGraph.js';
-import { AdapterOperations } from '../Operations.js';
+import { AdapterOperations } from '../../Operations/Operations.js';
 import { AddMeta } from './AddMeta.js';
 
 describe('AddMeta.apply', () => {

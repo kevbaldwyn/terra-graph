@@ -1,8 +1,8 @@
 import { NodeId, TgNodeAttributes } from '../../TgGraph.js';
-import { NodeHook } from '../NodeHook.js';
-import { AdapterOperations } from '../Operations.js';
+import { NodeRule } from '../Rule.js';
+import { AdapterOperations } from '../../Operations/Operations.js';
 
-export class AddModuleParent extends NodeHook {
+export class AddModuleParent extends NodeRule {
   constructor() {
     super({
       node: {
@@ -50,4 +50,4 @@ export class AddModuleParent extends NodeHook {
   }
 }
 
-NodeHook.register(AddModuleParent);
+NodeRule.register(AddModuleParent);

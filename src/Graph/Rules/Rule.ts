@@ -1,41 +1,41 @@
 import { NodeId, TgNodeAttributes } from '../TgGraph.js';
 import {
-  EdgeHookConfig,
-  HookConfig,
-  NodeHookConfig,
-  SerializedHook,
-} from './Hooks.js';
-import { NodeQuery } from './Matchers/NodeQuery/NodeQuery.js';
-import { AdapterOperations } from './Operations.js';
+  EdgeRuleConfig,
+  NodeRuleConfig,
+  RuleConfig,
+  SerializedRule,
+} from './RuleConfig.js';
+import { NodeQuery } from '../Operations/Matchers/NodeQuery/NodeQuery.js';
+import { AdapterOperations } from '../Operations/Operations.js';
 
-type HookFactory = (config: HookConfig) => BaseHook;
-type HookClass<TConfig extends HookConfig> = new (
+type RuleFactory = (config: RuleConfig) => BaseRule;
+type RuleClass<TConfig extends RuleConfig> = new (
   config: TConfig,
   ...args: unknown[]
-) => BaseHook<TConfig>;
+) => BaseRule<TConfig>;
 
-export type EdgeHookMatcher = { from: NodeQuery; to: NodeQuery };
+export type EdgeRuleMatcher = { from: NodeQuery; to: NodeQuery };
 
-export abstract class BaseHook<TConfig extends HookConfig = HookConfig> {
-  private static registry: Record<string, HookFactory> = {};
+export abstract class BaseRule<TConfig extends RuleConfig = RuleConfig> {
+  private static registry: Record<string, RuleFactory> = {};
   private lastMatch = false;
   private lastMatchNodeId?: NodeId;
 
   protected abstract get query(): unknown;
 
-  public static register<TConfig extends HookConfig>(
-    hookClass: HookClass<TConfig>,
+  public static register<TConfig extends RuleConfig>(
+    ruleClass: RuleClass<TConfig>,
   ) {
-    BaseHook.registry[hookClass.name] = (config) =>
-      new hookClass(config as TConfig);
+    BaseRule.registry[ruleClass.name] = (config) =>
+      new ruleClass(config as TConfig);
   }
 
-  public static fromSerialized(hook: SerializedHook): BaseHook {
-    const factory = BaseHook.registry[hook.id];
+  public static fromSerialized(rule: SerializedRule): BaseRule {
+    const factory = BaseRule.registry[rule.id];
     if (!factory) {
-      throw new Error(`Hook '${hook.id}' is not registered`);
+      throw new Error(`Rule '${rule.id}' is not registered`);
     }
-    return factory(hook.config);
+    return factory(rule.config);
   }
 
   constructor(protected readonly config: TConfig) {}
@@ -71,7 +71,7 @@ export abstract class BaseHook<TConfig extends HookConfig = HookConfig> {
     graph: AdapterOperations,
   ): AdapterOperations;
 
-  public serialize(): SerializedHook {
+  public serialize(): SerializedRule {
     return {
       id: this.getId(),
       config: this.config,
@@ -87,12 +87,12 @@ export abstract class BaseHook<TConfig extends HookConfig = HookConfig> {
   }
 }
 
-export abstract class NodeHook extends BaseHook<NodeHookConfig> {
+export abstract class NodeRule extends BaseRule<NodeRuleConfig> {
   private readonly queryValue: NodeQuery;
 
-  constructor(config: NodeHookConfig) {
+  constructor(config: NodeRuleConfig) {
     if (!('node' in config)) {
-      throw new Error(`Hook '${new.target.name}' requires a node config`);
+      throw new Error(`Rule '${new.target.name}' requires a node config`);
     }
     super(config);
     this.queryValue = NodeQuery.from(config.node);
@@ -111,12 +111,12 @@ export abstract class NodeHook extends BaseHook<NodeHookConfig> {
   }
 }
 
-export abstract class EdgeHook extends BaseHook<EdgeHookConfig> {
-  private readonly queryValue: EdgeHookMatcher;
+export abstract class EdgeRule extends BaseRule<EdgeRuleConfig> {
+  private readonly queryValue: EdgeRuleMatcher;
 
-  constructor(config: EdgeHookConfig) {
+  constructor(config: EdgeRuleConfig) {
     if (!('edge' in config)) {
-      throw new Error(`Hook '${new.target.name}' requires an edge config`);
+      throw new Error(`Rule '${new.target.name}' requires an edge config`);
     }
     super(config);
     this.queryValue = {
@@ -125,7 +125,7 @@ export abstract class EdgeHook extends BaseHook<EdgeHookConfig> {
     };
   }
 
-  protected get query(): EdgeHookMatcher {
+  protected get query(): EdgeRuleMatcher {
     return this.queryValue;
   }
 

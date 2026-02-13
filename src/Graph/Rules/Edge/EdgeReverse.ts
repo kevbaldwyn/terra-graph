@@ -1,8 +1,8 @@
 import { NodeId, TgEdgeAttributes, TgNodeAttributes } from '../../TgGraph.js';
-import { EdgeHook } from '../NodeHook.js';
-import { AdapterOperations } from '../Operations.js';
+import { EdgeRule } from '../Rule.js';
+import { AdapterOperations } from '../../Operations/Operations.js';
 
-export class EdgeReverse extends EdgeHook {
+export class EdgeReverse extends EdgeRule {
   public override apply(
     nodeId: NodeId,
     node: TgNodeAttributes,
@@ -37,4 +37,4 @@ export class EdgeReverse extends EdgeHook {
   }
 }
 
-EdgeHook.register(EdgeReverse);
+EdgeRule.register(EdgeReverse);

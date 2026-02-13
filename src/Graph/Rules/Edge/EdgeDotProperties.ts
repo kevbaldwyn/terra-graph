@@ -1,14 +1,14 @@
 import { DotAdapter } from '../../Adapters/DotAdapter.js';
 import { NodeId, TgNodeAttributes } from '../../TgGraph.js';
-import { EdgeHookConfig } from '../Hooks.js';
-import { EdgeHook } from '../NodeHook.js';
-import { AdapterOperations } from '../Operations.js';
+import { EdgeRuleConfig } from '../RuleConfig.js';
+import { EdgeRule } from '../Rule.js';
+import { AdapterOperations } from '../../Operations/Operations.js';
 
-export class EdgeDotProperties extends EdgeHook {
-  constructor(config: EdgeHookConfig) {
+export class EdgeDotProperties extends EdgeRule {
+  constructor(config: EdgeRuleConfig) {
     if (config.options === undefined) {
       throw new Error(
-        `Hook '${EdgeDotProperties.name}' requires options in config`,
+        `Rule '${EdgeDotProperties.name}' requires options in config`,
       );
     }
     super(config);
@@ -62,4 +62,4 @@ export class EdgeDotProperties extends EdgeHook {
   }
 }
 
-EdgeHook.register(EdgeDotProperties);
+EdgeRule.register(EdgeDotProperties);

@@ -1,13 +1,11 @@
-import { Adapter, AdapterFactory } from './Adapter.js';
-import { HookMatchError, HookModifyError } from './HookError.js';
-import { Hook } from './Hooks/Hooks.js';
-import { HookMap, getHooks } from './Operations/Hooks.js';
-import { BaseHook } from './Operations/NodeHook.js';
+import { AdapterFactory } from './Adapter.js';
+import { RuleMatchError, RuleModifyError } from './RuleError.js';
+import { BaseRule } from './Rules/Rule.js';
 import { AdapterOperations } from './Operations/Operations.js';
 import { NodeId, TgGraph } from './TgGraph.js';
 
-// TODO: better name not bound to hooks
-export type HookRunnerContext = {
+// TODO: better name not bound to rules
+export type PhaseRunnerContext = {
   logger?: (message: string) => void;
   errorHandler?: (error: Error) => void;
 };
@@ -15,13 +13,9 @@ export type HookRunnerContext = {
 // export type GraphResolverInput<AdapterType extends Adapter & Operations> = {
 export type GraphResolverInput<AdapterType extends AdapterOperations> = {
   graph: TgGraph;
-  // hooks will be pre-solved,
-  // the aim will be to have a set of hooks defined within a Profile
-  // hooks could therfore be generic (any Operations/Adapter interface)
-  // or apply only to specific Operations/Adapter interface
-  hooks: HookMap;
-  // hooks: OperationsHookMap<AdapterType>;
-  context?: HookRunnerContext;
+  // phases are ordered arrays of rules to apply sequentially
+  phases: BaseRule[][];
+  context?: PhaseRunnerContext;
 };
 
 export class GraphResolver {
@@ -30,111 +24,59 @@ export class GraphResolver {
   ) {}
 
   resolve(input: GraphResolverInput<AdapterOperations>): AdapterOperations {
-    const hooks = input.hooks;
-
     let adapter = this.adapterFactory.fromTgGraph(input.graph);
-
-    this.log(
-      input.context,
-      `applying first filter: ${adapter.nodeIds().length} nodes`,
-    );
-    adapter = this.modify(
-      this.modify(
-        adapter,
-        this.getHooks(Hook.META_BEFORE, hooks),
+    const phases = input.phases ?? [];
+    for (const [index, phase] of phases.entries()) {
+      const phaseLabel = `phase-${index + 1}`;
+      this.log(
         input.context,
-        'filter',
-      ),
-      this.getHooks(Hook.META_BEFORE, hooks),
-      input.context,
-      'filter',
-    );
-
-    this.log(
-      input.context,
-      `applying meta data: ${adapter.nodeIds().length} nodes`,
-    );
-    adapter = this.modify(
-      this.modify(
+        `applying ${phaseLabel}: ${adapter.nodeIds().length} nodes`,
+      );
+      adapter = this.modify(
         adapter,
-        this.getHooks(Hook.META_APPLY, hooks),
+        phase,
         input.context,
-        'decorate',
-      ),
-      this.getHooks(Hook.META_APPLY, hooks),
-      input.context,
-      'decorate',
-    );
-
-    this.log(
-      input.context,
-      `applying final filter: ${adapter.nodeIds().length} nodes`,
-    );
-    adapter = this.modify(
-      this.modify(
-        adapter,
-        this.getHooks(Hook.GRAPH_FILTER, hooks),
-        input.context,
-        'filter',
-      ),
-      this.getHooks(Hook.GRAPH_FILTER, hooks),
-      input.context,
-      'filter',
-    );
-
-    this.log(
-      input.context,
-      `decorating graph: ${adapter.nodeIds().length} nodes`,
-    );
-    adapter = this.modify(
-      this.modify(
-        adapter,
-        this.getHooks(Hook.GRAPH_DECORATE, hooks),
-        input.context,
-        'decorate',
-      ),
-      this.getHooks(Hook.GRAPH_DECORATE, hooks),
-      input.context,
-      'decorate',
-    );
+        phaseLabel,
+      );
+    }
 
     return adapter;
   }
 
   private modify(
     adapter: AdapterOperations,
-    hooks: BaseHook[],
-    context?: HookRunnerContext,
-    logPrefix: 'filter' | 'decorate' = 'decorate',
+    rules: BaseRule[],
+    context?: PhaseRunnerContext,
+    logPrefix = 'phase',
   ): AdapterOperations {
     let updated = adapter;
     const nodeIds = adapter.nodeIds();
 
     for (const nodeId of nodeIds) {
-      for (const hook of hooks) {
+      for (const rule of rules) {
         const node = updated.getNodeAttributes(nodeId);
         if (!node) {
           break;
         }
         try {
-          if (hook.match(nodeId, node, updated)) {
-            if (hook.describe) {
+          if (rule.match(nodeId, node, updated)) {
+            if (rule.describe) {
               this.log(
                 context,
                 this.logMessage(
                   `${logPrefix}:match`,
-                  hook.describe(nodeId, node),
+                  rule.describe(nodeId, node),
                   nodeId,
                 ),
               );
             }
             try {
-              if (!hook.supports(updated)) {
+              if (!rule.supports(updated)) {
                 continue;
               }
-              updated = hook.apply(nodeId, node, updated);
+              updated = rule.apply(nodeId, node, updated);
             } catch (e) {
-              throw new HookModifyError(
+              throw new RuleModifyError(
                 { cause: e as Error },
                 {
                   nodeId: nodeId as unknown as string,
@@ -144,9 +86,9 @@ export class GraphResolver {
             }
           }
         } catch (e) {
-          if (!(e instanceof HookModifyError)) {
+          if (!(e instanceof RuleModifyError)) {
             // biome-ignore lint/suspicious/noCatchAssign: <explanation>
-            e = new HookMatchError(
+            e = new RuleMatchError(
               { cause: e as Error },
               {
                 nodeId: nodeId as unknown as string,
@@ -161,13 +103,16 @@ export class GraphResolver {
     return updated;
   }
 
-  private log(context: HookRunnerContext | undefined, message: string) {
+  private log(context: PhaseRunnerContext | undefined, message: string) {
     if (context?.logger) {
       context.logger(message);
     }
   }
 
-  private handleError(context: HookRunnerContext | undefined, error: Error) {
+  private handleError(
+    context: PhaseRunnerContext | undefined,
+    error: Error,
+  ) {
     if (context?.errorHandler) {
       context.errorHandler(error);
       return;
@@ -177,9 +122,5 @@ export class GraphResolver {
 
   private logMessage(prefix: string, msg: string, nodeName: NodeId) {
     return ` -> [${prefix}][${msg}]: ${nodeName}`;
-  }
-
-  private getHooks<HookStep extends Hook>(hookStep: HookStep, hooks: HookMap) {
-    return getHooks(hookStep, hooks);
   }
 }

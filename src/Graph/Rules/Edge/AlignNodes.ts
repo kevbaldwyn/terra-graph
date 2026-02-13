@@ -1,9 +1,9 @@
 import { DotAdapter } from '../../Adapters/DotAdapter.js';
 import { NodeId, TgNodeAttributes } from '../../TgGraph.js';
-import { EdgeHook } from '../NodeHook.js';
-import { AdapterOperations } from '../Operations.js';
+import { EdgeRule } from '../Rule.js';
+import { AdapterOperations } from '../../Operations/Operations.js';
 
-export class AlignNodes extends EdgeHook {
+export class AlignNodes extends EdgeRule {
   public override supports(adapter: AdapterOperations): boolean {
     return adapter instanceof DotAdapter;
   }
@@ -49,4 +49,4 @@ export class AlignNodes extends EdgeHook {
   }
 }
 
-EdgeHook.register(AlignNodes);
+EdgeRule.register(AlignNodes);

@@ -1,8 +1,8 @@
 import { NodeId, TgNodeAttributes } from '../../TgGraph.js';
-import { NodeHook } from '../NodeHook.js';
-import { AdapterOperations } from '../Operations.js';
+import { NodeRule } from '../Rule.js';
+import { AdapterOperations } from '../../Operations/Operations.js';
 
-export class AddMeta extends NodeHook {
+export class AddMeta extends NodeRule {
   public override apply(
     nodeId: NodeId,
     node: TgNodeAttributes,
@@ -23,4 +23,4 @@ export class AddMeta extends NodeHook {
   }
 }
 
-NodeHook.register(AddMeta);
+NodeRule.register(AddMeta);

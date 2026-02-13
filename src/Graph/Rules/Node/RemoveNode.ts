@@ -1,8 +1,8 @@
 import { NodeId, TgNodeAttributes } from '../../TgGraph.js';
-import { NodeHook } from '../NodeHook.js';
-import { AdapterOperations } from '../Operations.js';
+import { NodeRule } from '../Rule.js';
+import { AdapterOperations } from '../../Operations/Operations.js';
 
-export class RemoveNode extends NodeHook {
+export class RemoveNode extends NodeRule {
   public override apply(
     nodeId: NodeId,
     node: TgNodeAttributes,
@@ -15,4 +15,4 @@ export class RemoveNode extends NodeHook {
   }
 }
 
-NodeHook.register(RemoveNode);
+NodeRule.register(RemoveNode);

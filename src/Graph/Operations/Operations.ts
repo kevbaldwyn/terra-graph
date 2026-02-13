@@ -6,7 +6,7 @@ import type {
   TgNodeAttributes,
 } from '../TgGraph.js';
 
-// Minimal traversal/mutation surface for hooks/plugins to depend on.
+// Minimal traversal/mutation surface for rules/plugins to depend on.
 export interface Operations {
   getNodeAttributes(nodeId: NodeId): TgNodeAttributes | undefined;
   getEdgeAttributes(edgeId: EdgeId): TgEdgeAttributes;

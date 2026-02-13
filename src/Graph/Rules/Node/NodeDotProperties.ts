@@ -1,11 +1,11 @@
 import { DotAdapter } from '../../Adapters/DotAdapter.js';
 import { NodeId, TgNodeAttributes } from '../../TgGraph.js';
-import { NodeHookConfig } from '../Hooks.js';
-import { NodeHook } from '../NodeHook.js';
-import { AdapterOperations } from '../Operations.js';
+import { NodeRuleConfig } from '../RuleConfig.js';
+import { NodeRule } from '../Rule.js';
+import { AdapterOperations } from '../../Operations/Operations.js';
 
-export class NodeDotProperties extends NodeHook {
-  // private static readonly defaultConfig: NodeHookConfig = {
+export class NodeDotProperties extends NodeRule {
+  // private static readonly defaultConfig: NodeRuleConfig = {
   //   node: {
   //     and: [
   //       { nodeId: { startsWith: 'cluster_module.' } },
@@ -14,10 +14,10 @@ export class NodeDotProperties extends NodeHook {
   //   },
   // };
 
-  constructor(config: NodeHookConfig) {
+  constructor(config: NodeRuleConfig) {
     if (config.options === undefined) {
       throw new Error(
-        `Hook '${NodeDotProperties.name}' requires options in config`,
+        `Rule '${NodeDotProperties.name}' requires options in config`,
       );
     }
     super(config);
@@ -52,4 +52,4 @@ export class NodeDotProperties extends NodeHook {
   }
 }
 
-NodeHook.register(NodeDotProperties);
+NodeRule.register(NodeDotProperties);

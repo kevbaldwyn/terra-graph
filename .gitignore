@@ -9,3 +9,4 @@ src/config.*.js
 tmp
 .terraform
 coverage
+test-graph

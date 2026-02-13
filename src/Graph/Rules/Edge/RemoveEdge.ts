@@ -1,8 +1,8 @@
-import { NodeId, TgNodeAttributes, edgeIdFrom } from '../../TgGraph.js';
-import { EdgeHook } from '../NodeHook.js';
-import { AdapterOperations } from '../Operations.js';
+import { NodeId, TgNodeAttributes } from '../../TgGraph.js';
+import { EdgeRule } from '../Rule.js';
+import { AdapterOperations } from '../../Operations/Operations.js';
 
-export class ExplicitEdge extends EdgeHook {
+export class RemoveEdge extends EdgeRule {
   public override apply(
     nodeId: NodeId,
     node: TgNodeAttributes,
@@ -13,25 +13,24 @@ export class ExplicitEdge extends EdgeHook {
     }
 
     let updated = graph;
-
     const { from, to } = this.query;
 
     if (!from.match(nodeId, node, updated)) {
       return updated;
     }
 
-    for (const targetId of updated.nodeIds()) {
+    const edges = updated.outEdges(nodeId);
+    for (const edgeId of edges) {
+      const targetId = updated.edgeTarget(edgeId);
       const target = updated.getNodeAttributes(targetId);
       if (!target || !to.match(targetId, target, updated)) {
         continue;
       }
-
-      const edgeId = edgeIdFrom(nodeId, targetId);
-      updated = updated.setEdge(edgeId, nodeId, targetId, {});
+      updated = updated.removeEdge(edgeId);
     }
 
     return updated;
   }
 }
 
-EdgeHook.register(ExplicitEdge);
+EdgeRule.register(RemoveEdge);
