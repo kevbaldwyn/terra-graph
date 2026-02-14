@@ -1,5 +1,5 @@
 import { AdapterOperations } from './Operations/Operations.js';
-import type { Renderer } from './Renderers/Renderer.js';
+import type { Renderer } from './Renderer.js';
 import { TgGraph } from './TgGraph.js';
 
 export interface Adapter {

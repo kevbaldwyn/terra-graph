@@ -1,6 +1,6 @@
 import { NodeId } from '../TgGraph.js';
 import { DotRenderer } from '../Renderers/DotRenderer.js';
-import type { Renderer } from '../Renderers/Renderer.js';
+import type { Renderer } from '../Renderer.js';
 import { GraphologyAdapter } from './GraphologyAdapter.js';
 
 type DotRank = {

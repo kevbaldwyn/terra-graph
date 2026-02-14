@@ -6,14 +6,11 @@ import { AdapterOperations } from './Operations/Operations.js';
 describe('GraphResolver.resolve', () => {
   it('shoud resolve without phases when there are no nodes', () => {
     const adapter = mock<AdapterOperations>();
+    adapter.withTgGraph.mockReturnValue(adapter);
     adapter.nodeIds.mockReturnValue([]);
     // const adapter = new GraphologyAdapter(new Graph.DirectedGraph());
 
-    const resolver = new GraphResolver({
-      fromTgGraph() {
-        return adapter;
-      },
-    });
+    const resolver = new GraphResolver(adapter);
 
     // const rule = mock<NodeRule>();
     // rule.apply.mockImplementation((_nodeId, _node, graph) => graph);

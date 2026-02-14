@@ -1,8 +1,8 @@
-import { AdapterFactory } from './Adapter.js';
 import { RuleMatchError, RuleModifyError } from './RuleError.js';
 import { BaseRule } from './Rules/Rule.js';
 import { AdapterOperations } from './Operations/Operations.js';
 import { NodeId, TgGraph } from './TgGraph.js';
+import { Renderer } from './Renderer.js';
 
 // TODO: better name not bound to rules
 export type PhaseRunnerContext = {
@@ -11,7 +11,7 @@ export type PhaseRunnerContext = {
 };
 
 // export type GraphResolverInput<AdapterType extends Adapter & Operations> = {
-export type GraphResolverInput<AdapterType extends AdapterOperations> = {
+export type GraphResolverInput = {
   graph: TgGraph;
   // phases are ordered arrays of rules to apply sequentially
   phases: BaseRule[][];
@@ -19,12 +19,12 @@ export type GraphResolverInput<AdapterType extends AdapterOperations> = {
 };
 
 export class GraphResolver {
-  constructor(
-    private readonly adapterFactory: AdapterFactory<AdapterOperations>,
-  ) {}
+  // private adapter?: Adapter;
 
-  resolve(input: GraphResolverInput<AdapterOperations>): AdapterOperations {
-    let adapter = this.adapterFactory.fromTgGraph(input.graph);
+  constructor(private readonly adapter: AdapterOperations) {}
+
+  public resolve(input: GraphResolverInput): AdapterOperations {
+    let adapter = this.adapter.withTgGraph(input.graph);
     const phases = input.phases ?? [];
     for (const [index, phase] of phases.entries()) {
       const phaseLabel = `phase-${index + 1}`;
@@ -32,16 +32,21 @@ export class GraphResolver {
         input.context,
         `applying ${phaseLabel}: ${adapter.nodeIds().length} nodes`,
       );
-      adapter = this.modify(
-        adapter,
-        phase,
-        input.context,
-        phaseLabel,
-      );
+      adapter = this.modify(adapter, phase, input.context, phaseLabel);
     }
+    // this.adapter = adapter;
 
     return adapter;
   }
+
+  // public render(): string {
+  //   if (!this.adapter) {
+  //     throw new Error('No adapter defined when trying to render');
+  //   }
+
+  //   // this feels weird
+  //   return this.adapter.getRenderer().render(this.adapter);
+  // }
 
   private modify(
     adapter: AdapterOperations,
@@ -109,10 +114,7 @@ export class GraphResolver {
     }
   }
 
-  private handleError(
-    context: PhaseRunnerContext | undefined,
-    error: Error,
-  ) {
+  private handleError(context: PhaseRunnerContext | undefined, error: Error) {
     if (context?.errorHandler) {
       context.errorHandler(error);
       return;
