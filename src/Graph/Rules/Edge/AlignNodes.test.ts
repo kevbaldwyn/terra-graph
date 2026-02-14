@@ -40,7 +40,7 @@ describe('AlignNodes.apply', () => {
       },
     };
 
-    const adapter = new DotAdapter(new DirectedGraph()).fromTgGraph(tg);
+    const adapter = new DotAdapter(new DirectedGraph()).withTgGraph(tg);
     const moduleNode = adapter.getNodeAttributes(nodeB);
     if (!moduleNode) {
       throw new Error('Missing node attributes for node-b');
@@ -70,7 +70,7 @@ describe('AlignNodes.apply', () => {
       edges: [],
     };
 
-    const adapter = new DotAdapter(new DirectedGraph()).fromTgGraph(tg);
+    const adapter = new DotAdapter(new DirectedGraph()).withTgGraph(tg);
     const node = adapter.getNodeAttributes(nodeId);
     if (!node) {
       throw new Error('Missing node attributes for node-a');

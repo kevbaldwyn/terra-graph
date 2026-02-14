@@ -25,7 +25,7 @@ describe('EdgeDotProperties.apply', () => {
       ],
     };
 
-    const adapter = new DotAdapter(new DirectedGraph()).fromTgGraph(tg);
+    const adapter = new DotAdapter(new DirectedGraph()).withTgGraph(tg);
     const node = adapter.getNodeAttributes(nodeA);
     if (!node) {
       throw new Error('Missing node attributes for node-a');
@@ -77,7 +77,7 @@ describe('EdgeDotProperties.apply', () => {
       ],
     };
 
-    const adapter = new DotAdapter(new DirectedGraph()).fromTgGraph(tg);
+    const adapter = new DotAdapter(new DirectedGraph()).withTgGraph(tg);
     const node = adapter.getNodeAttributes(nodeB);
     if (!node) {
       throw new Error('Missing node attributes for node-b');

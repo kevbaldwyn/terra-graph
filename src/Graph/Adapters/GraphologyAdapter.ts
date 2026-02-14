@@ -1,6 +1,5 @@
 import { DirectedGraph } from 'graphology';
 import type { AbstractGraph as Graphology } from 'graphology-types';
-import { Adapter, AdapterFactory } from '../Adapter.js';
 import { AdapterOperations } from '../Operations/Operations.js';
 import {
   EdgeId,
@@ -12,20 +11,72 @@ import {
   TgNodeAttributes,
   asNodeId,
 } from '../TgGraph.js';
+import { JsonRenderer } from '../Renderers/JsonRenderer.js';
 
 export enum GraphAttributeKey {
   Description = 'tg:description',
 }
 
 export class GraphologyAdapter implements AdapterOperations {
-  public static fromTgGraph: AdapterFactory<GraphologyAdapter>['fromTgGraph'] =
-    (tg: TgGraph) => {
-      const graph = new DirectedGraph();
-      const adapter = new GraphologyAdapter(graph);
-      return adapter.fromTgGraph(tg);
-    };
-
   constructor(private readonly graph: Graphology) {}
+
+  public withTgGraph(tg: TgGraph): this {
+    return this.mutateGraph((graph) => {
+      for (const node of Object.values(tg.nodes)) {
+        graph.addNode(node.id, node);
+      }
+
+      for (const edge of tg.edges) {
+        graph.addEdgeWithKey(
+          edge.id,
+          edge.from,
+          edge.to,
+          edge.attributes ?? {},
+        );
+      }
+      graph.setAttribute(GraphAttributeKey.Description, tg.description);
+    });
+  }
+
+  public toTgGraph(): TgGraph {
+    const nodes: Record<string, TgNode> = {};
+    const edges: TgEdge[] = [];
+
+    this.graph.forEachNode((nodeId, attributes) => {
+      const id = asNodeId(nodeId);
+      nodes[nodeId] = {
+        id,
+        ...attributes,
+        label: attributes.label ?? id,
+      };
+    });
+
+    this.graph.forEachEdge(
+      (edgeId, attributes: TgEdgeAttributes, source, target) => {
+        edges.push({
+          id: edgeId as EdgeId,
+          from: source as NodeId,
+          to: target as NodeId,
+          attributes,
+        });
+      },
+    );
+
+    const description = this.readGraphAttribute<Record<string, string>>(
+      GraphAttributeKey.Description,
+      {},
+    );
+
+    return {
+      nodes,
+      edges,
+      description,
+    };
+  }
+
+  public getRenderer() {
+    return new JsonRenderer();
+  }
 
   public getGraph(): Graphology {
     return this.graph.copy();
@@ -123,60 +174,6 @@ export class GraphologyAdapter implements AdapterOperations {
       }
     });
     return legend;
-  }
-
-  public fromTgGraph(tg: TgGraph): GraphologyAdapter {
-    return this.mutateGraph((graph) => {
-      for (const node of Object.values(tg.nodes)) {
-        graph.addNode(node.id, node);
-      }
-
-      for (const edge of tg.edges) {
-        graph.addEdgeWithKey(
-          edge.id,
-          edge.from,
-          edge.to,
-          edge.attributes ?? {},
-        );
-      }
-      graph.setAttribute(GraphAttributeKey.Description, tg.description);
-    });
-  }
-
-  public toTgGraph(): TgGraph {
-    const nodes: Record<string, TgNode> = {};
-    const edges: TgEdge[] = [];
-
-    this.graph.forEachNode((nodeId, attributes) => {
-      const id = asNodeId(nodeId);
-      nodes[nodeId] = {
-        id,
-        ...attributes,
-        label: attributes.label ?? id,
-      };
-    });
-
-    this.graph.forEachEdge(
-      (edgeId, attributes: TgEdgeAttributes, source, target) => {
-        edges.push({
-          id: edgeId as EdgeId,
-          from: source as NodeId,
-          to: target as NodeId,
-          attributes,
-        });
-      },
-    );
-
-    const description = this.readGraphAttribute<Record<string, string>>(
-      GraphAttributeKey.Description,
-      {},
-    );
-
-    return {
-      nodes,
-      edges,
-      description,
-    };
   }
 
   protected readGraphAttribute<T>(key: string, fallback: T): T {

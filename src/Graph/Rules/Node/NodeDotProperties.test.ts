@@ -14,7 +14,7 @@ describe('NodeDotProperties.apply', () => {
       edges: [],
     };
 
-    const adapter = new DotAdapter(new DirectedGraph()).fromTgGraph(tg);
+    const adapter = new DotAdapter(new DirectedGraph()).withTgGraph(tg);
     const node = adapter.getNodeAttributes(moduleId);
     if (!node) {
       throw new Error('Missing node attributes for module');

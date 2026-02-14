@@ -1,4 +1,4 @@
-import { DirectedGraph, UndirectedGraph } from 'graphology';
+import Graph, { DirectedGraph, UndirectedGraph } from 'graphology';
 import { asEdgeId, asNodeId } from '../TgGraph.js';
 import { GraphologyAdapter } from './GraphologyAdapter.js';
 
@@ -245,11 +245,11 @@ const buildTgGraph = () => {
   };
 };
 
-describe('GraphologyAdapter.fromTgGraph', () => {
+describe('GraphologyAdapter.withTgGraph', () => {
   it('shoud return a new adapter with the graph data applied', () => {
     const { tg } = buildTgGraph();
 
-    const updated = GraphologyAdapter.fromTgGraph(tg);
+    const updated = new GraphologyAdapter(new DirectedGraph()).withTgGraph(tg);
 
     expect(updated.toTgGraph()).toStrictEqual(tg);
   });
@@ -271,7 +271,7 @@ describe('GraphologyAdapter.fromTgGraph', () => {
       description: {},
     };
 
-    const updated = GraphologyAdapter.fromTgGraph(tg);
+    const updated = new GraphologyAdapter(new DirectedGraph()).withTgGraph(tg);
 
     expect(updated.toTgGraph()).toStrictEqual({
       ...tg,

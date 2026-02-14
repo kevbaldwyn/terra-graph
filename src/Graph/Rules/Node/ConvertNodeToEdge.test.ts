@@ -28,7 +28,7 @@ describe('ConvertNodeToEdge.apply', () => {
       ],
     };
 
-    const adapter = new GraphologyAdapter(new DirectedGraph()).fromTgGraph(tg);
+    const adapter = new GraphologyAdapter(new DirectedGraph()).withTgGraph(tg);
     const node = adapter.getNodeAttributes(nodeLabel);
     if (!node) {
       throw new Error('Missing node attributes for resource.name');
@@ -71,7 +71,7 @@ describe('ConvertNodeToEdge.apply', () => {
       ],
     };
 
-    const adapter = new GraphologyAdapter(new DirectedGraph()).fromTgGraph(tg);
+    const adapter = new GraphologyAdapter(new DirectedGraph()).withTgGraph(tg);
     const node = adapter.getNodeAttributes(nodeLabel);
     if (!node) {
       throw new Error('Missing node attributes for resource.name');

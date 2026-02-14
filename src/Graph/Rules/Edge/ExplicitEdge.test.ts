@@ -26,7 +26,7 @@ describe('ExplicitEdge.apply', () => {
       },
     });
 
-    const adapter = new GraphologyAdapter(new DirectedGraph()).fromTgGraph(tg);
+    const adapter = new GraphologyAdapter(new DirectedGraph()).withTgGraph(tg);
     const node = adapter.getNodeAttributes(nodeA);
     if (!node) {
       throw new Error('Missing node attributes for node-a');
@@ -65,7 +65,7 @@ describe('ExplicitEdge.apply', () => {
       },
     });
 
-    const adapter = new GraphologyAdapter(new DirectedGraph()).fromTgGraph(tg);
+    const adapter = new GraphologyAdapter(new DirectedGraph()).withTgGraph(tg);
     const node = adapter.getNodeAttributes(nodeB);
     if (!node) {
       throw new Error('Missing node attributes for node-b');
