@@ -1,190 +1,146 @@
-import { Hook } from './Hooks/Hooks.js';
-import {
-  HookMap,
-  NodeHook,
-  SerializedHook,
-  SerializedHookMap,
-} from './Operations/Hooks.js';
-import { OperationsType } from './Operations/Operations.js';
-import {
-  HookRegistry,
-  OperationsTypeRegistry,
-} from './Serialization/Registry.js';
+import { AdapterOperationsConstructor } from './Operations/Operations.js';
+import { BaseRule } from './Rules/Rule.js';
+import { SerializedRule, SerializedRulePlan } from './Rules/RuleConfig.js';
+import { SupportedAdapterOperationsRegistry } from './Serialization/Registry.js';
 
-export type ProfileJson = {
+export type ProfileRenderConfig<TOptions = Record<string, unknown>> = {
+  options?: TOptions;
+};
+
+export type SerializedProfile<TOptions = Record<string, unknown>> = {
   name: string;
-  operationsType?: string;
-  hooks?: SerializedHookMap;
-  usesProfiles?: ProfileJson[];
+  supports?: string;
+  render?: ProfileRenderConfig<TOptions>;
+  phases?: SerializedRulePlan;
+  usesProfiles?: SerializedProfile<TOptions>[];
 };
 
-export type ProfileOptions = {
-  operationsType?: OperationsType;
-  hooks?: HookMap;
-  usesProfiles?: Profile[];
+export type ProfileOptions<TOptions = Record<string, unknown>> = {
+  supports?: AdapterOperationsConstructor;
+  render?: ProfileRenderConfig<TOptions>;
+  phases?: BaseRule[][];
+  usesProfiles?: Profile<TOptions>[];
 };
 
-export class Profile {
-  public readonly operationsType?: OperationsType;
-  private readonly hooks: HookMap;
-  private readonly usesProfiles: Profile[];
+export class Profile<TOptions = Record<string, unknown>> {
+  public readonly supports?: AdapterOperationsConstructor;
+  private readonly render?: ProfileRenderConfig<TOptions>;
+  private readonly phases: BaseRule[][];
+  private readonly usesProfiles: Profile<TOptions>[];
 
   constructor(
     public readonly name: string,
-    options: ProfileOptions,
+    options: ProfileOptions<TOptions>,
   ) {
-    this.operationsType = options.operationsType;
-    this.hooks = options.hooks ?? {};
+    this.supports = options.supports;
+    this.render = options.render;
+    this.phases = options.phases ?? [];
     this.usesProfiles = options.usesProfiles ?? [];
   }
 
-  public use(profile: Profile): Profile {
+  public use(profile: Profile<TOptions>): Profile<TOptions> {
     return new Profile(this.name, {
-      operationsType: this.operationsType,
-      hooks: this.hooks,
+      supports: this.supports,
+      render: this.render,
+      phases: this.phases,
       usesProfiles: [...this.usesProfiles, profile],
     });
   }
 
-  public addHooks(hooks: HookMap): Profile {
+  public addPhases(phases: BaseRule[][]): Profile<TOptions> {
     return new Profile(this.name, {
-      operationsType: this.operationsType,
-      hooks: this.mergeHooks(this.hooks, hooks),
+      supports: this.supports,
+      render: this.render,
+      phases: [...this.phases, ...phases],
       usesProfiles: this.usesProfiles,
     });
   }
 
-  public resolveHooks(): HookMap {
-    if (this.operationsType) {
-      this.assertCompatibleOperationsTypes(this.operationsType);
+  public resolvePhases(): BaseRule[][] {
+    if (this.supports) {
+      this.assertCompatibleSupportedAdapterOperations(this.supports);
     }
     return this.usesProfiles.reduce(
-      (acc, profile) => this.mergeHooks(acc, profile.resolveHooks()),
-      this.hooks,
+      // biome-ignore lint/performance/noAccumulatingSpread: <explanation>
+      (acc, profile) => [...acc, ...profile.resolvePhases()],
+      this.phases,
     );
   }
 
-  public toJson(): ProfileJson {
+  public serialize(): SerializedProfile<TOptions> {
     return {
       name: this.name,
-      operationsType: this.operationsType?.name,
-      hooks: this.serializeHookMap(this.hooks),
-      usesProfiles: this.usesProfiles.map((profile) => profile.toJson()),
+      supports: this.supports?.name,
+      render: this.render,
+      phases: this.serializePhases(this.phases),
+      usesProfiles: this.usesProfiles.map((profile) => profile.serialize()),
     };
   }
 
-  public static fromJson(
-    json: ProfileJson,
-    hooks: HookRegistry,
-    operationsTypes?: OperationsTypeRegistry,
-  ): Profile {
-    const operationsType = json.operationsType
-      ? operationsTypes?.[json.operationsType]
+  public static deseriaize<TOptions = Record<string, unknown>>(
+    json: SerializedProfile<TOptions>,
+    supportedAdpaterOperationsRegistry?: SupportedAdapterOperationsRegistry,
+  ): Profile<TOptions> {
+    const supports = json.supports
+      ? supportedAdpaterOperationsRegistry?.[json.supports]
       : undefined;
-    if (json.operationsType && !operationsType) {
+    if (json.supports && !supports) {
       throw new Error(
-        `Profile operationsType '${json.operationsType}' is not registered`,
+        `Profile.supports ('${json.supports}') is not registered`,
       );
     }
     return new Profile(json.name, {
-      operationsType,
-      hooks: Profile.deserializeHookMap(json.hooks ?? {}, hooks),
+      supports,
+      render: json.render,
+      phases: Profile.deserializePhases(json.phases ?? []),
       usesProfiles: (json.usesProfiles ?? []).map((profile) =>
-        Profile.fromJson(profile, hooks, operationsTypes),
+        Profile.deseriaize<TOptions>(profile, supportedAdpaterOperationsRegistry),
       ),
     });
   }
 
-  private assertCompatibleOperationsTypes(operationsType: OperationsType) {
+  public resolveRendererOptions(): TOptions | undefined {
+    const inherited = this.usesProfiles.reduce<TOptions | undefined>(
+      (_acc, profile) => profile.resolveRendererOptions(),
+      undefined,
+    );
+    return this.render?.options ?? inherited;
+  }
+
+  private assertCompatibleSupportedAdapterOperations(
+    supports: AdapterOperationsConstructor,
+  ) {
     const conflicting = this.collectProfiles().filter(
-      (profile) =>
-        profile.operationsType && profile.operationsType !== operationsType,
+      (profile) => profile.supports && profile.supports !== supports,
     );
     if (conflicting.length > 0) {
       const names = conflicting.map((profile) => profile.name).join(', ');
       throw new Error(
-        `Profile operationsType conflict for '${operationsType.name}' (conflicting profiles: ${names})`,
+        `Profile.supports conflict for ('${supports.name}') (conflicting profiles: ${names})`,
       );
     }
   }
 
-  private collectProfiles(): Profile[] {
+  private collectProfiles(): Profile<TOptions>[] {
     return [
       this,
       ...this.usesProfiles.flatMap((profile) => profile.collectProfiles()),
     ];
   }
 
-  private mergeHooks(source: HookMap, extension: HookMap): HookMap {
-    return {
-      [Hook.META_BEFORE]: [
-        ...(source[Hook.META_BEFORE] ?? []),
-        ...(extension[Hook.META_BEFORE] ?? []),
-      ],
-      [Hook.META_APPLY]: [
-        ...(source[Hook.META_APPLY] ?? []),
-        ...(extension[Hook.META_APPLY] ?? []),
-      ],
-      [Hook.GRAPH_FILTER]: [
-        ...(source[Hook.GRAPH_FILTER] ?? []),
-        ...(extension[Hook.GRAPH_FILTER] ?? []),
-      ],
-      [Hook.GRAPH_DECORATE]: [
-        ...(source[Hook.GRAPH_DECORATE] ?? []),
-        ...(extension[Hook.GRAPH_DECORATE] ?? []),
-      ],
-    };
+  private serializePhases(phases: BaseRule[][]): SerializedRulePlan {
+    return phases.map((phase) => phase.map((rule) => rule.serialize()));
   }
 
-  private serializeHookMap(hooks: HookMap): SerializedHookMap {
-    return {
-      [Hook.META_BEFORE]: this.serializeHooks(hooks[Hook.META_BEFORE]),
-      [Hook.META_APPLY]: this.serializeHooks(hooks[Hook.META_APPLY]),
-      [Hook.GRAPH_FILTER]: this.serializeHooks(hooks[Hook.GRAPH_FILTER]),
-      [Hook.GRAPH_DECORATE]: this.serializeHooks(hooks[Hook.GRAPH_DECORATE]),
-    };
+  private static deserializePhases(phases: SerializedRulePlan): BaseRule[][] {
+    return phases.map((phase) =>
+      phase.map((rule) => Profile.deserializeRule(rule)),
+    );
   }
 
-  private serializeHooks(
-    hooks: NodeHook[] | undefined,
-  ): SerializedHook[] | undefined {
-    if (!hooks) {
-      return undefined;
-    }
-    return hooks.map((hook) => {
-      // TODO: push config validation/normalization into hook classes.
-      return hook.serialize();
-    });
-  }
-
-  private static deserializeHookMap(
-    hooks: SerializedHookMap,
-    registry: HookRegistry,
-  ): HookMap {
-    return {
-      [Hook.META_BEFORE]: hooks[Hook.META_BEFORE]?.map((hook) =>
-        Profile.deserializeHook(hook, registry),
-      ),
-      [Hook.META_APPLY]: hooks[Hook.META_APPLY]?.map((hook) =>
-        Profile.deserializeHook(hook, registry),
-      ),
-      [Hook.GRAPH_FILTER]: hooks[Hook.GRAPH_FILTER]?.map((hook) =>
-        Profile.deserializeHook(hook, registry),
-      ),
-      [Hook.GRAPH_DECORATE]: hooks[Hook.GRAPH_DECORATE]?.map((hook) =>
-        Profile.deserializeHook(hook, registry),
-      ),
-    };
-  }
-
-  private static deserializeHook<ReturnedHookType = NodeHook>(
-    hook: SerializedHook,
-    registry: HookRegistry,
-  ): ReturnedHookType {
-    const factory = registry[hook.id];
-    if (!factory) {
-      throw new Error(`Hook '${hook.id}' is not registered`);
-    }
-    return factory(hook.config) as ReturnedHookType;
+  private static deserializeRule<ReturnedRuleType = BaseRule>(
+    rule: SerializedRule,
+  ): ReturnedRuleType {
+    return BaseRule.fromSerialized(rule) as ReturnedRuleType;
   }
 }

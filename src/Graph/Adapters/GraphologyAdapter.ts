@@ -73,8 +73,10 @@ export class GraphologyAdapter implements AdapterOperations {
     };
   }
 
-  public getRenderer() {
-    return new JsonRenderer();
+  public getRenderer<TOptions = unknown>(
+    _options?: TOptions,
+  ): JsonRenderer<this> {
+    return new JsonRenderer<this>();
   }
 
   public getGraph(): Graphology {

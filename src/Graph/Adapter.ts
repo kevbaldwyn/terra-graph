@@ -5,7 +5,7 @@ import { TgGraph } from './TgGraph.js';
 export interface Adapter {
   toTgGraph(): TgGraph;
   withTgGraph(tg: TgGraph): AdapterOperations;
-  getRenderer(): Renderer<Adapter>;
+  getRenderer<TOptions = unknown>(options?: TOptions): Renderer<this>;
 }
 
 // export type AdapterFactory<A extends Adapter> = {
