@@ -41,6 +41,7 @@ export type AttrPredicate = z.infer<typeof AttrPredicateObject>;
 export type NodeIdPredicate = z.infer<typeof PredicateObject>;
 
 export type QueryDsl =
+  | { any: true }
   | { and: QueryDsl[] }
   | { or: QueryDsl[] }
   | { not: QueryDsl }
@@ -50,6 +51,7 @@ export type QueryDsl =
 
 export const QuerySchema: z.ZodType<QueryDsl> = z.lazy(() =>
   z.union([
+    z.object({ any: z.literal(true) }),
     z.object({ and: z.array(QuerySchema).min(1) }),
     z.object({ or: z.array(QuerySchema).min(1) }),
     z.object({ not: QuerySchema }),

@@ -39,6 +39,10 @@ export class NodeQuery {
   }
 
   private static compile(dsl: QueryDsl): NodeMatchFn {
+    if ('any' in dsl) {
+      return () => true;
+    }
+
     if ('and' in dsl) {
       const compiled = dsl.and.map((item) => NodeQuery.compile(item));
       return (nodeId, node, graph) =>
