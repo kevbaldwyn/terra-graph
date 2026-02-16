@@ -124,10 +124,18 @@ export class NodeQuery {
       return String(value ?? '').includes(predicate.contains);
     }
     if (predicate.startsWith !== undefined) {
-      return String(value ?? '').startsWith(predicate.startsWith);
+      const text = String(value ?? '');
+      const needles = Array.isArray(predicate.startsWith)
+        ? predicate.startsWith
+        : [predicate.startsWith];
+      return needles.some((item) => text.startsWith(item));
     }
     if (predicate.endsWith !== undefined) {
-      return String(value ?? '').endsWith(predicate.endsWith);
+      const text = String(value ?? '');
+      const needles = Array.isArray(predicate.endsWith)
+        ? predicate.endsWith
+        : [predicate.endsWith];
+      return needles.some((item) => text.endsWith(item));
     }
     if (predicate.exists !== undefined) {
       return predicate.exists ? value !== undefined : value === undefined;

@@ -4,8 +4,8 @@ const PredicateObject = z.object({
   eq: z.unknown().optional(),
   in: z.array(z.unknown()).optional(),
   contains: z.string().optional(),
-  startsWith: z.string().optional(),
-  endsWith: z.string().optional(),
+  startsWith: z.union([z.string(), z.array(z.string()).min(1)]).optional(),
+  endsWith: z.union([z.string(), z.array(z.string()).min(1)]).optional(),
   exists: z.boolean().optional(),
 });
 

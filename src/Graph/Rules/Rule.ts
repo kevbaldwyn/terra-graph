@@ -1,3 +1,5 @@
+import { NodeQuery } from '../Operations/Matchers/NodeQuery/NodeQuery.js';
+import { AdapterOperations } from '../Operations/Operations.js';
 import { NodeId, TgNodeAttributes } from '../TgGraph.js';
 import {
   EdgeRuleConfig,
@@ -5,8 +7,6 @@ import {
   RuleConfig,
   SerializedRule,
 } from './RuleConfig.js';
-import { NodeQuery } from '../Operations/Matchers/NodeQuery/NodeQuery.js';
-import { AdapterOperations } from '../Operations/Operations.js';
 
 type RuleFactory = (config: RuleConfig) => BaseRule;
 type RuleClass<TConfig extends RuleConfig> = new (

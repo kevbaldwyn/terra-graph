@@ -1,6 +1,6 @@
+import { AdapterOperations } from '../../Operations/Operations.js';
 import { NodeId, TgNodeAttributes } from '../../TgGraph.js';
 import { EdgeRule } from '../Rule.js';
-import { AdapterOperations } from '../../Operations/Operations.js';
 
 export class RemoveEdge extends EdgeRule {
   public override apply(

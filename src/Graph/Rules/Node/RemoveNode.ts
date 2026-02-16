@@ -1,6 +1,6 @@
+import { AdapterOperations } from '../../Operations/Operations.js';
 import { NodeId, TgNodeAttributes } from '../../TgGraph.js';
 import { NodeRule } from '../Rule.js';
-import { AdapterOperations } from '../../Operations/Operations.js';
 
 export class RemoveNode extends NodeRule {
   public override apply(

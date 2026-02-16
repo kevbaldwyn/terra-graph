@@ -1,8 +1,8 @@
 import { DotAdapter } from '../../Adapters/DotAdapter.js';
-import { NodeId, TgNodeAttributes } from '../../TgGraph.js';
-import { EdgeRuleConfig } from '../RuleConfig.js';
-import { EdgeRule } from '../Rule.js';
 import { AdapterOperations } from '../../Operations/Operations.js';
+import { NodeId, TgNodeAttributes } from '../../TgGraph.js';
+import { EdgeRule } from '../Rule.js';
+import { EdgeRuleConfig } from '../RuleConfig.js';
 
 export class EdgeDotProperties extends EdgeRule {
   constructor(config: EdgeRuleConfig) {

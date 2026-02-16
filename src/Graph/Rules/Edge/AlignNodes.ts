@@ -1,7 +1,7 @@
 import { DotAdapter } from '../../Adapters/DotAdapter.js';
+import { AdapterOperations } from '../../Operations/Operations.js';
 import { NodeId, TgNodeAttributes } from '../../TgGraph.js';
 import { EdgeRule } from '../Rule.js';
-import { AdapterOperations } from '../../Operations/Operations.js';
 
 export class AlignNodes extends EdgeRule {
   public override supports(adapter: AdapterOperations): boolean {

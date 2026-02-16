@@ -33,5 +33,7 @@ export interface Operations {
 
 export type AdapterOperations = Adapter & Operations;
 
-// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-export type OperationsType = new (...args: any[]) => Operations;
+export type AdapterOperationsConstructor = new (
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  ...args: any[]
+) => AdapterOperations;

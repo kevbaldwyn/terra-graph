@@ -1,6 +1,6 @@
 import { mock } from 'jest-mock-extended';
-import { TgNodeAttributes, asNodeId } from '../../TgGraph.js';
 import { AdapterOperations } from '../../Operations/Operations.js';
+import { TgNodeAttributes, asNodeId } from '../../TgGraph.js';
 import { AddModuleParent } from './AddModuleParent.js';
 
 describe('AddModuleParent.apply', () => {

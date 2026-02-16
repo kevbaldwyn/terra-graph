@@ -1,8 +1,8 @@
 import { DotAdapter } from '../../Adapters/DotAdapter.js';
-import { NodeId, TgNodeAttributes } from '../../TgGraph.js';
-import { NodeRuleConfig } from '../RuleConfig.js';
-import { NodeRule } from '../Rule.js';
 import { AdapterOperations } from '../../Operations/Operations.js';
+import { NodeId, TgNodeAttributes } from '../../TgGraph.js';
+import { NodeRule } from '../Rule.js';
+import { NodeRuleConfig } from '../RuleConfig.js';
 
 export class NodeDotProperties extends NodeRule {
   // private static readonly defaultConfig: NodeRuleConfig = {
