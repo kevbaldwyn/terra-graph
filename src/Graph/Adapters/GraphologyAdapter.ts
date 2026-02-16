@@ -17,7 +17,7 @@ export enum GraphAttributeKey {
 }
 
 export class GraphologyAdapter implements AdapterOperations {
-  constructor(private readonly graph: Graphology) {}
+  constructor(protected readonly graph: Graphology) {}
 
   public withTgGraph(tg: TgGraph): this {
     return this.mutateGraph((graph) => {

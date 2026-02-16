@@ -67,4 +67,77 @@ describe('DotRenderer.render', () => {
 
     expect(output).toContain(`{ rank = same; "${nodeA}" "${nodeB}" }`);
   });
+
+  it('shoud include graph attributes such as rankdir when provided', () => {
+    const nodeA = asNodeId('node-a');
+    const nodeB = asNodeId('node-b');
+
+    const tg: TgGraph = {
+      description: {},
+      nodes: {
+        [nodeA]: { id: nodeA, label: 'A' },
+        [nodeB]: { id: nodeB, label: 'B' },
+      },
+      edges: [],
+    };
+
+    const adapter = new DotAdapter(new DirectedGraph()).withTgGraph(tg);
+    const renderer = new DotRenderer({
+      graph: { rankdir: 'LR' },
+    });
+
+    const output = renderer.render(adapter);
+
+    expect(output).toContain('rankdir=LR');
+  });
+
+  it('shoud set nodesep and ranksep defaults for TB rankdir when not provided', () => {
+    const nodeA = asNodeId('node-a');
+
+    const tg: TgGraph = {
+      description: {},
+      nodes: {
+        [nodeA]: { id: nodeA, label: 'A' },
+      },
+      edges: [],
+    };
+
+    const adapter = new DotAdapter(new DirectedGraph()).withTgGraph(tg);
+    const renderer = new DotRenderer({
+      graph: { rankdir: 'TB' },
+    });
+
+    const output = renderer.render(adapter);
+
+    expect(output).toContain('rankdir=TB');
+    expect(output).toContain('nodesep=2.5');
+    expect(output).toContain('ranksep=0.6');
+  });
+
+  it('shoud keep explicit nodesep and ranksep when provided with TB rankdir', () => {
+    const nodeA = asNodeId('node-a');
+
+    const tg: TgGraph = {
+      description: {},
+      nodes: {
+        [nodeA]: { id: nodeA, label: 'A' },
+      },
+      edges: [],
+    };
+
+    const adapter = new DotAdapter(new DirectedGraph()).withTgGraph(tg);
+    const renderer = new DotRenderer({
+      graph: {
+        rankdir: 'TB',
+        nodesep: 9.9,
+        ranksep: 8.8,
+      },
+    });
+
+    const output = renderer.render(adapter);
+
+    expect(output).toContain('rankdir=TB');
+    expect(output).toContain('nodesep=9.9');
+    expect(output).toContain('ranksep=8.8');
+  });
 });

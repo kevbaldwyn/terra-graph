@@ -4,8 +4,34 @@ import { DotAdapter } from '../Adapters/DotAdapter.js';
 import { Renderer } from '../Renderer.js';
 import { TgEdge, TgGraph, TgNode } from '../TgGraph.js';
 
+type DotGraphAttributes = {
+  rankdir?: 'TB' | 'BT' | 'LR' | 'RL';
+  ranksep?: number;
+  nodesep?: number;
+  pad?: number;
+} & Record<string, string | number | boolean | undefined>;
+
+export type DotRendererOptions = {
+  graph?: DotGraphAttributes;
+};
+
+const defaultGraphOptions: DotRendererOptions = {
+  graph: {
+    rankdir: 'LR',
+    ranksep: 2.5,
+    nodesep: 0.6,
+    pad: 1,
+  },
+};
+
 export class DotRenderer implements Renderer<DotAdapter> {
-  // constructor(private readonly adapter: DotAdapter) {}
+  private readonly options: DotRendererOptions;
+
+  constructor(options: DotRendererOptions = {}) {
+    this.options = {
+      graph: DotRenderer.resolveGraphOptions(options.graph),
+    };
+  }
 
   public render(adapter: DotAdapter): string {
     const tg = adapter.toTgGraph();
@@ -14,6 +40,8 @@ export class DotRenderer implements Renderer<DotAdapter> {
       multigraph: true,
       compound: true,
     });
+
+    graph.setGraph(this.options.graph ?? {});
 
     this.addNodes(graph, tg);
     this.addEdges(graph, tg);
@@ -70,5 +98,24 @@ export class DotRenderer implements Renderer<DotAdapter> {
     }
 
     return `${output.slice(0, lastBrace)}\n${rankBlock}\n}`;
+  }
+
+  private static resolveGraphOptions(
+    input?: DotGraphAttributes,
+  ): DotGraphAttributes {
+    const graphOptions: DotGraphAttributes = {
+      ...(defaultGraphOptions.graph ?? {}),
+      ...(input ?? {}),
+    };
+
+    if (graphOptions.rankdir === 'TB' || graphOptions.rankdir === 'BT') {
+      return {
+        ...graphOptions,
+        nodesep: input?.nodesep ?? 2.5,
+        ranksep: input?.ranksep ?? 0.6,
+      };
+    }
+
+    return graphOptions;
   }
 }

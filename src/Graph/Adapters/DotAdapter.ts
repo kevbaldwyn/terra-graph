@@ -1,3 +1,4 @@
+import type { AbstractGraph as Graphology } from 'graphology-types';
 import type { Renderer } from '../Renderer.js';
 import { DotRenderer } from '../Renderers/DotRenderer.js';
 import { NodeId } from '../TgGraph.js';
@@ -11,8 +12,15 @@ type DotRank = {
 export class DotAdapter extends GraphologyAdapter {
   private static readonly RankAttr = 'tg:dot:ranks';
 
+  constructor(
+    protected readonly graph: Graphology,
+    private renderer?: DotRenderer,
+  ) {
+    super(graph);
+  }
+
   public getRenderer(): Renderer<DotAdapter> {
-    return new DotRenderer();
+    return this.renderer ?? new DotRenderer();
   }
 
   public addRank(nodes: NodeId[], mode: DotRank['mode'] = 'same'): this {
