@@ -3,6 +3,12 @@ import { NodeId, TgNodeAttributes } from '../../TgGraph.js';
 import { NodeRule } from '../Rule.js';
 
 export class AddMeta extends NodeRule {
+  constructor() {
+    super({
+      node: { any: true },
+    });
+  }
+
   public override apply(
     nodeId: NodeId,
     node: TgNodeAttributes,

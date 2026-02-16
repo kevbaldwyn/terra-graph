@@ -1,3 +1,4 @@
+import { DotAdapter } from '../../Adapters/DotAdapter.js';
 import { AdapterOperations } from '../../Operations/Operations.js';
 import { NodeId, TgNodeAttributes } from '../../TgGraph.js';
 import { NodeRule } from '../Rule.js';
@@ -12,6 +13,10 @@ export class AddModuleParent extends NodeRule {
         ],
       },
     });
+  }
+
+  public supports(adapter: AdapterOperations): boolean {
+    return adapter instanceof DotAdapter;
   }
 
   public override apply(

@@ -1,7 +1,26 @@
+import { DirectedGraph } from 'graphology';
 import { mock } from 'jest-mock-extended';
+import { DotAdapter } from '../../Adapters/DotAdapter.js';
+import { GraphologyAdapter } from '../../Adapters/GraphologyAdapter.js';
 import { AdapterOperations } from '../../Operations/Operations.js';
 import { TgNodeAttributes, asNodeId } from '../../TgGraph.js';
 import { AddModuleParent } from './AddModuleParent.js';
+
+describe('AddModuleParent.supports', () => {
+  it('shoud return true for DotAdapter', () => {
+    const rule = new AddModuleParent();
+    const adapter = new DotAdapter(new DirectedGraph());
+
+    expect(rule.supports(adapter)).toBe(true);
+  });
+
+  it('shoud return false for non Dot adapters', () => {
+    const rule = new AddModuleParent();
+    const adapter = new GraphologyAdapter(new DirectedGraph());
+
+    expect(rule.supports(adapter)).toBe(false);
+  });
+});
 
 describe('AddModuleParent.apply', () => {
   it('shoud set parent for nodes in the same module', () => {
