@@ -1,8 +1,8 @@
 import { Graph as GraphLibGraph } from 'graphlib';
-import * as dot from 'graphlib-dot';
+import dot from 'graphlib-dot';
 import { DotAdapter } from '../Adapters/DotAdapter.js';
-import { TgEdge, TgGraph, TgNode } from '../TgGraph.js';
 import { Renderer } from '../Renderer.js';
+import { TgEdge, TgGraph, TgNode } from '../TgGraph.js';
 
 export class DotRenderer implements Renderer<DotAdapter> {
   // constructor(private readonly adapter: DotAdapter) {}

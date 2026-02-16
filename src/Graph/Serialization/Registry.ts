@@ -1,6 +1,6 @@
-import { SerializedRule } from '../Rules/RuleConfig.js';
+import { AdapterOperationsConstructor } from '../Operations/Operations.js';
 import { BaseRule } from '../Rules/Rule.js';
-import { OperationsType } from '../Operations/Operations.js';
+import { SerializedRule } from '../Rules/RuleConfig.js';
 
 // TODO: refine rule serialization:
 // - do nested matchers serialize cleanly (id -> query)?
@@ -12,4 +12,7 @@ export type RuleRegistry = Record<
   (config: SerializedRule['config']) => BaseRule
 >;
 
-export type OperationsTypeRegistry = Record<string, OperationsType>;
+export type SupportedAdapterOperationsRegistry = Record<
+  string,
+  AdapterOperationsConstructor
+>;

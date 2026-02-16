@@ -1,6 +1,6 @@
-import { DirectedGraph } from 'graphology';
 import type { AbstractGraph as Graphology } from 'graphology-types';
 import { AdapterOperations } from '../Operations/Operations.js';
+import { JsonRenderer } from '../Renderers/JsonRenderer.js';
 import {
   EdgeId,
   NodeId,
@@ -11,7 +11,6 @@ import {
   TgNodeAttributes,
   asNodeId,
 } from '../TgGraph.js';
-import { JsonRenderer } from '../Renderers/JsonRenderer.js';
 
 export enum GraphAttributeKey {
   Description = 'tg:description',

@@ -1,7 +1,7 @@
 import { DirectedGraph } from 'graphology';
 import { DotAdapter } from '../Adapters/DotAdapter.js';
+import { TgGraph, asEdgeId, asNodeId } from '../TgGraph.js';
 import { DotRenderer } from './DotRenderer.js';
-import { asEdgeId, asNodeId, TgGraph } from '../TgGraph.js';
 
 describe('DotRenderer.render', () => {
   it('shoud render nodes and edges with dot adapter attributes', () => {

@@ -1,27 +1,25 @@
+import { AdapterOperations } from './Operations/Operations.js';
+import { Renderer } from './Renderer.js';
 import { RuleMatchError, RuleModifyError } from './RuleError.js';
 import { BaseRule } from './Rules/Rule.js';
-import { AdapterOperations } from './Operations/Operations.js';
 import { NodeId, TgGraph } from './TgGraph.js';
-import { Renderer } from './Renderer.js';
 
-// TODO: better name not bound to rules
 export type PhaseRunnerContext = {
   logger?: (message: string) => void;
   errorHandler?: (error: Error) => void;
 };
 
-// export type GraphResolverInput<AdapterType extends Adapter & Operations> = {
 export type GraphResolverInput = {
   graph: TgGraph;
   // phases are ordered arrays of rules to apply sequentially
   phases: BaseRule[][];
-  context?: PhaseRunnerContext;
 };
 
 export class GraphResolver {
-  // private adapter?: Adapter;
-
-  constructor(private readonly adapter: AdapterOperations) {}
+  constructor(
+    private readonly adapter: AdapterOperations,
+    private context?: PhaseRunnerContext,
+  ) {}
 
   public resolve(input: GraphResolverInput): AdapterOperations {
     let adapter = this.adapter.withTgGraph(input.graph);
@@ -29,24 +27,14 @@ export class GraphResolver {
     for (const [index, phase] of phases.entries()) {
       const phaseLabel = `phase-${index + 1}`;
       this.log(
-        input.context,
+        this.context,
         `applying ${phaseLabel}: ${adapter.nodeIds().length} nodes`,
       );
-      adapter = this.modify(adapter, phase, input.context, phaseLabel);
+      adapter = this.modify(adapter, phase, this.context, phaseLabel);
     }
-    // this.adapter = adapter;
 
     return adapter;
   }
-
-  // public render(): string {
-  //   if (!this.adapter) {
-  //     throw new Error('No adapter defined when trying to render');
-  //   }
-
-  //   // this feels weird
-  //   return this.adapter.getRenderer().render(this.adapter);
-  // }
 
   private modify(
     adapter: AdapterOperations,

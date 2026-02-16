@@ -1,7 +1,7 @@
 import { mock } from 'jest-mock-extended';
 import { GraphResolver, PhaseRunnerContext } from './GraphResolver.js';
-import { BaseRule } from './Rules/Rule.js';
 import { AdapterOperations } from './Operations/Operations.js';
+import { BaseRule } from './Rules/Rule.js';
 
 describe('GraphResolver.resolve', () => {
   it('shoud resolve without phases when there are no nodes', () => {
@@ -10,7 +10,7 @@ describe('GraphResolver.resolve', () => {
     adapter.nodeIds.mockReturnValue([]);
     // const adapter = new GraphologyAdapter(new Graph.DirectedGraph());
 
-    const resolver = new GraphResolver(adapter);
+    const resolver = new GraphResolver(adapter, mock<PhaseRunnerContext>());
 
     // const rule = mock<NodeRule>();
     // rule.apply.mockImplementation((_nodeId, _node, graph) => graph);
@@ -22,7 +22,6 @@ describe('GraphResolver.resolve', () => {
         nodes: {},
         description: {},
       },
-      context: mock<PhaseRunnerContext>(),
       phases: [[mock<BaseRule>()]],
     });
 
