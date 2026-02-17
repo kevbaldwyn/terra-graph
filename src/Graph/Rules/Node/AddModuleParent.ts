@@ -15,9 +15,10 @@ export class AddModuleParent extends NodeRule {
     });
   }
 
-  public supports(adapter: AdapterOperations): boolean {
-    return adapter instanceof DotAdapter;
-  }
+  // is this DotAdapter specific?
+  // public supports(adapter: AdapterOperations): boolean {
+  //   return adapter instanceof DotAdapter;
+  // }
 
   public override apply(
     nodeId: NodeId,
