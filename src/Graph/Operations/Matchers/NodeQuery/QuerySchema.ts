@@ -39,6 +39,10 @@ export const NodeIdPredicateSchema = PredicateSchema;
 
 export type AttrPredicate = z.infer<typeof AttrPredicateObject>;
 export type NodeIdPredicate = z.infer<typeof PredicateObject>;
+export type ChildrenPredicate = {
+  exists?: boolean;
+  count?: number;
+};
 
 export type QueryDsl =
   | { any: true }
@@ -47,6 +51,7 @@ export type QueryDsl =
   | { not: QueryDsl }
   | { attr: AttrPredicate }
   | { nodeId: NodeIdPredicate }
+  | { children: ChildrenPredicate }
   | { edge: { in?: QueryDsl; out?: QueryDsl } };
 
 export const QuerySchema: z.ZodType<QueryDsl> = z.lazy(() =>
@@ -57,6 +62,22 @@ export const QuerySchema: z.ZodType<QueryDsl> = z.lazy(() =>
     z.object({ not: QuerySchema }),
     z.object({ attr: AttrPredicateSchema }),
     z.object({ nodeId: NodeIdPredicateSchema }),
+    z
+      .object({
+        children: z.object({
+          exists: z.boolean().optional(),
+          count: z.number().int().min(0).optional(),
+        }),
+      })
+      .refine((value) => {
+        const ops = [
+          value.children.exists !== undefined,
+          value.children.count !== undefined,
+        ].filter(Boolean);
+        return ops.length === 1;
+      }, {
+        message: 'children must define exactly one of: exists | count',
+      }),
     z
       .object({
         edge: z.object({

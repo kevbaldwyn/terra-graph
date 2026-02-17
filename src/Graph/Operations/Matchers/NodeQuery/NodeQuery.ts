@@ -4,6 +4,7 @@ import { Operations } from '../../Operations.js';
 import { NodeMatchFn } from '../NodeMatchFn.js';
 import {
   AttrPredicate,
+  ChildrenPredicate,
   NodeIdPredicate,
   QueryDsl,
   QuerySchema,
@@ -68,6 +69,10 @@ export class NodeQuery {
       return NodeQuery.compileNodeId(dsl.nodeId);
     }
 
+    if ('children' in dsl) {
+      return NodeQuery.compileChildren(dsl.children);
+    }
+
     if ('edge' in dsl) {
       const inMatcher = dsl.edge.in
         ? NodeQuery.compile(dsl.edge.in)
@@ -112,6 +117,22 @@ export class NodeQuery {
 
   private static compileNodeId(predicate: NodeIdPredicate): NodeMatchFn {
     return (nodeId) => NodeQuery.matchPredicate(String(nodeId), predicate);
+  }
+
+  private static compileChildren(predicate: ChildrenPredicate): NodeMatchFn {
+    return (nodeId, _node, graph) => {
+      const childCount = graph.successors(nodeId).length;
+
+      if (predicate.exists !== undefined) {
+        return predicate.exists ? childCount > 0 : childCount === 0;
+      }
+
+      if (predicate.count !== undefined) {
+        return childCount === predicate.count;
+      }
+
+      return false;
+    };
   }
 
   private static matchPredicate(
