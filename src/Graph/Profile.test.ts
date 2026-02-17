@@ -2,6 +2,7 @@ import { GraphologyAdapter } from './Adapters/GraphologyAdapter.js';
 import { NodeQuery } from './Operations/Matchers/NodeQuery/NodeQuery.js';
 import { AdapterOperations } from './Operations/Operations.js';
 import { Profile } from './Profile.js';
+import { NamedRuleRegistry } from './Rules/NamedRuleRegistry.js';
 import { NodeRule } from './Rules/Rule.js';
 import { NodeId, TgNodeAttributes } from './TgGraph.js';
 
@@ -148,6 +149,63 @@ describe('Profile.resolveRendererOptions', () => {
       graph: {
         rankdir: 'TB',
       },
+    });
+  });
+});
+
+describe('Profile.resolvePhases', () => {
+  it('shoud resolve named rules when a registry is provided', () => {
+    const registry = new NamedRuleRegistry({
+      removeAlways: {
+        id: 'AlwaysMatchRule',
+        config: { node: { any: true } },
+      },
+    });
+    const profile = new Profile('named-profile', {
+      phases: [[{ namedRule: 'removeAlways' }]],
+    });
+
+    const phases = profile.resolvePhases(registry);
+
+    expect(phases).toHaveLength(1);
+    expect(phases[0]).toHaveLength(1);
+    expect(phases[0][0].serialize()).toEqual({
+      id: 'AlwaysMatchRule',
+      config: { node: { any: true } },
+    });
+  });
+
+  it('shoud throw when named rules are used without a registry', () => {
+    const profile = new Profile('named-profile', {
+      phases: [[{ namedRule: 'removeAlways' }]],
+    });
+
+    expect(() => profile.resolvePhases()).toThrow(
+      "Profile 'named-profile' contains named rules but no NamedRuleRegistry was provided",
+    );
+  });
+
+  it('shoud use current named rule definitions after deserialize', () => {
+    const profile = new Profile('named-profile', {
+      phases: [[{ namedRule: 'removeAlways' }]],
+    });
+
+    const serialized = profile.serialize();
+    const restored = Profile.deseriaize(serialized);
+    const updatedRegistry = new NamedRuleRegistry({
+      removeAlways: {
+        id: 'AlwaysMatchRule',
+        config: {
+          node: { attr: { key: 'label', startsWith: 'data.' } },
+        },
+      },
+    });
+
+    const phases = restored.resolvePhases(updatedRegistry);
+
+    expect(phases[0][0].serialize()).toEqual({
+      id: 'AlwaysMatchRule',
+      config: { node: { attr: { key: 'label', startsWith: 'data.' } } },
     });
   });
 });
