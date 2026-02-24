@@ -1,7 +1,9 @@
 import { BaseRule } from './Rule.js';
-import { RuleConfig, SerializedRule } from './RuleConfig.js';
-
-export type NamedRuleDefinition = SerializedRule | BaseRule | (() => BaseRule);
+import {
+  NamedRuleDefinition,
+  NamedRuleDefinitions,
+} from './RulePlan.js';
+import { RuleConfig } from './RuleConfig.js';
 
 type NamedRuleFactory = () => BaseRule;
 
@@ -9,7 +11,7 @@ export class NamedRuleRegistry {
   private readonly definitions: Record<string, NamedRuleFactory>;
 
   constructor(
-    definitions: Record<string, NamedRuleDefinition> = {},
+    definitions: NamedRuleDefinitions = {},
     factories?: Record<string, NamedRuleFactory>,
   ) {
     this.definitions = Object.freeze(
@@ -35,7 +37,7 @@ export class NamedRuleRegistry {
   }
 
   public registerMany(
-    definitions: Record<string, NamedRuleDefinition>,
+    definitions: NamedRuleDefinitions,
   ): NamedRuleRegistry {
     const nextFactories = {
       ...this.definitions,
@@ -78,7 +80,7 @@ export class NamedRuleRegistry {
   }
 
   private static toFactories(
-    definitions: Record<string, NamedRuleDefinition>,
+    definitions: NamedRuleDefinitions,
   ): Record<string, NamedRuleFactory> {
     return Object.fromEntries(
       Object.entries(definitions).map(([name, definition]) => [
