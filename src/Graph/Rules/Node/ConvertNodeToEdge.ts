@@ -24,8 +24,8 @@ export class ConvertNodeToEdge extends NodeRule {
     const targetId = graph.edgeTarget(outEdgeId);
 
     const renderHints = {
-      resource: node.meta?.resource ?? node.label.split('.')[0] ?? '',
-      name: node.meta?.name ?? node.label.split('.').pop() ?? '',
+      resource: node.terraform?.resource ?? '',
+      name: node.terraform?.name ?? '',
     };
 
     let updated = graph.removeEdge(inEdgeId).removeEdge(outEdgeId);

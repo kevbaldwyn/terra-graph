@@ -68,7 +68,7 @@ export class DotRenderer implements Renderer<DotAdapter> {
 
   private toDotNodeAttributes(node: TgNode): Record<string, unknown> {
     return {
-      label: node.label,
+      label: this.buildNodeLabel(node),
       ...(node.adapter?.[DotAdapter.name] ?? {}),
     };
   }
@@ -98,6 +98,21 @@ export class DotRenderer implements Renderer<DotAdapter> {
     }
 
     return `${output.slice(0, lastBrace)}\n${rankBlock}\n}`;
+  }
+
+  private buildNodeLabel(node: TgNode): string {
+    const resource = node.terraform?.resource ?? '';
+    const name = node.terraform?.name ?? '';
+    if (resource && name) {
+      return `${resource}.${name}`;
+    }
+    if (name) {
+      return name;
+    }
+    if (resource) {
+      return resource;
+    }
+    return String(node.id);
   }
 
   private static resolveGraphOptions(

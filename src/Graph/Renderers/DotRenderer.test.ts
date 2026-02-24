@@ -1,6 +1,6 @@
 import { DirectedGraph } from 'graphology';
 import { DotAdapter } from '../Adapters/DotAdapter.js';
-import { TgGraph, asEdgeId, asNodeId } from '../TgGraph.js';
+import { TG_SCHEMA_VERSION, TgGraph, asEdgeId, asNodeId } from '../TgGraph.js';
 import { DotRenderer } from './DotRenderer.js';
 
 describe('DotRenderer.render', () => {
@@ -10,16 +10,30 @@ describe('DotRenderer.render', () => {
     const edgeId = asEdgeId('edge-a-b');
 
     const tg: TgGraph = {
+      schemaVersion: TG_SCHEMA_VERSION,
       description: {},
       nodes: {
         [nodeA]: {
           id: nodeA,
-          label: 'A',
+          terraform: {
+            kind: 'resource',
+            address: 'aws_s3_bucket.a',
+            resource: 'aws_s3_bucket',
+            name: 'a',
+          },
           adapter: {
             [DotAdapter.name]: { shape: 'box' },
           },
         },
-        [nodeB]: { id: nodeB, label: 'B' },
+        [nodeB]: {
+          id: nodeB,
+          terraform: {
+            kind: 'resource',
+            address: 'aws_s3_bucket.b',
+            resource: 'aws_s3_bucket',
+            name: 'b',
+          },
+        },
       },
       edges: [
         {
@@ -41,7 +55,7 @@ describe('DotRenderer.render', () => {
     const output = renderer.render(adapter);
 
     expect(output).toContain('"node-a"');
-    expect(output).toContain('label=A');
+    expect(output).toContain('label="aws_s3_bucket.a"');
     expect(output).toContain('shape=box');
     expect(output).toContain('style=dashed');
   });
@@ -51,10 +65,27 @@ describe('DotRenderer.render', () => {
     const nodeB = asNodeId('node-b');
 
     const tg: TgGraph = {
+      schemaVersion: TG_SCHEMA_VERSION,
       description: {},
       nodes: {
-        [nodeA]: { id: nodeA, label: 'A' },
-        [nodeB]: { id: nodeB, label: 'B' },
+        [nodeA]: {
+          id: nodeA,
+          terraform: {
+            kind: 'resource',
+            address: 'aws_s3_bucket.a',
+            resource: 'aws_s3_bucket',
+            name: 'a',
+          },
+        },
+        [nodeB]: {
+          id: nodeB,
+          terraform: {
+            kind: 'resource',
+            address: 'aws_s3_bucket.b',
+            resource: 'aws_s3_bucket',
+            name: 'b',
+          },
+        },
       },
       edges: [],
     };
@@ -73,10 +104,27 @@ describe('DotRenderer.render', () => {
     const nodeB = asNodeId('node-b');
 
     const tg: TgGraph = {
+      schemaVersion: TG_SCHEMA_VERSION,
       description: {},
       nodes: {
-        [nodeA]: { id: nodeA, label: 'A' },
-        [nodeB]: { id: nodeB, label: 'B' },
+        [nodeA]: {
+          id: nodeA,
+          terraform: {
+            kind: 'resource',
+            address: 'aws_s3_bucket.a',
+            resource: 'aws_s3_bucket',
+            name: 'a',
+          },
+        },
+        [nodeB]: {
+          id: nodeB,
+          terraform: {
+            kind: 'resource',
+            address: 'aws_s3_bucket.b',
+            resource: 'aws_s3_bucket',
+            name: 'b',
+          },
+        },
       },
       edges: [],
     };
@@ -95,9 +143,18 @@ describe('DotRenderer.render', () => {
     const nodeA = asNodeId('node-a');
 
     const tg: TgGraph = {
+      schemaVersion: TG_SCHEMA_VERSION,
       description: {},
       nodes: {
-        [nodeA]: { id: nodeA, label: 'A' },
+        [nodeA]: {
+          id: nodeA,
+          terraform: {
+            kind: 'resource',
+            address: 'aws_s3_bucket.a',
+            resource: 'aws_s3_bucket',
+            name: 'a',
+          },
+        },
       },
       edges: [],
     };
@@ -118,9 +175,18 @@ describe('DotRenderer.render', () => {
     const nodeA = asNodeId('node-a');
 
     const tg: TgGraph = {
+      schemaVersion: TG_SCHEMA_VERSION,
       description: {},
       nodes: {
-        [nodeA]: { id: nodeA, label: 'A' },
+        [nodeA]: {
+          id: nodeA,
+          terraform: {
+            kind: 'resource',
+            address: 'aws_s3_bucket.a',
+            resource: 'aws_s3_bucket',
+            name: 'a',
+          },
+        },
       },
       edges: [],
     };

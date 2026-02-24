@@ -1,12 +1,13 @@
 import { DirectedGraph } from 'graphology';
 import { DotAdapter } from '../../Adapters/DotAdapter.js';
-import { TgGraph, asNodeId } from '../../TgGraph.js';
+import { TG_SCHEMA_VERSION, TgGraph, asNodeId } from '../../TgGraph.js';
 import { NodeDotProperties } from './NodeDotProperties.js';
 
 describe('NodeDotProperties.apply', () => {
   it('shoud store dot adapter options for module nodes', () => {
     const moduleId = asNodeId('cluster_module.example');
     const tg: TgGraph = {
+      schemaVersion: TG_SCHEMA_VERSION,
       description: {},
       nodes: {
         [moduleId]: { id: moduleId, label: 'module.example' },

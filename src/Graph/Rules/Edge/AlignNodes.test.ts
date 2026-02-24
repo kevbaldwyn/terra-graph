@@ -1,6 +1,11 @@
 import { DirectedGraph } from 'graphology';
 import { DotAdapter } from '../../Adapters/DotAdapter.js';
-import { TgGraph, asEdgeId, asNodeId } from '../../TgGraph.js';
+import {
+  TG_SCHEMA_VERSION,
+  TgGraph,
+  asEdgeId,
+  asNodeId,
+} from '../../TgGraph.js';
 import { AlignNodes } from './AlignNodes.js';
 
 describe('AlignNodes.apply', () => {
@@ -10,6 +15,7 @@ describe('AlignNodes.apply', () => {
     const nodeC = asNodeId('node-c');
 
     const tg: TgGraph = {
+      schemaVersion: TG_SCHEMA_VERSION,
       description: {},
       nodes: {
         [nodeA]: { id: nodeA, label: 'A' },
@@ -63,6 +69,7 @@ describe('AlignNodes.apply', () => {
   it('shoud keep graph unchanged when the hook does not match', () => {
     const nodeId = asNodeId('node-a');
     const tg: TgGraph = {
+      schemaVersion: TG_SCHEMA_VERSION,
       description: {},
       nodes: {
         [nodeId]: { id: nodeId, label: 'A' },

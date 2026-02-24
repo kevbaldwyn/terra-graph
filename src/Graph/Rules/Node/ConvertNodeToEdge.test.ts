@@ -1,6 +1,12 @@
 import { DirectedGraph } from 'graphology';
 import { GraphologyAdapter } from '../../Adapters/GraphologyAdapter.js';
-import { TgGraph, asEdgeId, asNodeId, edgeIdFrom } from '../../TgGraph.js';
+import {
+  TG_SCHEMA_VERSION,
+  TgGraph,
+  asEdgeId,
+  asNodeId,
+  edgeIdFrom,
+} from '../../TgGraph.js';
 import { ConvertNodeToEdge } from './ConvertNodeToEdge.js';
 
 describe('ConvertNodeToEdge.apply', () => {
@@ -12,13 +18,19 @@ describe('ConvertNodeToEdge.apply', () => {
     const edgeOut = asEdgeId('edge-out');
 
     const tg: TgGraph = {
+      schemaVersion: TG_SCHEMA_VERSION,
       description: {},
       nodes: {
         [nodeA]: { id: nodeA, label: 'A' },
         [nodeLabel]: {
           id: nodeLabel,
           label: 'resource.name',
-          meta: { resource: 'resource', name: 'name' },
+          terraform: {
+            kind: 'resource',
+            address: 'resource.name',
+            resource: 'resource',
+            name: 'name',
+          },
         },
         [nodeB]: { id: nodeB, label: 'B' },
       },
@@ -57,6 +69,7 @@ describe('ConvertNodeToEdge.apply', () => {
     const nodeLabel = asNodeId('resource.name');
 
     const tg: TgGraph = {
+      schemaVersion: TG_SCHEMA_VERSION,
       description: {},
       nodes: {
         [nodeA]: { id: nodeA, label: 'A' },

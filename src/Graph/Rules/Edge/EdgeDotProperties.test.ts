@@ -1,6 +1,11 @@
 import { DirectedGraph } from 'graphology';
 import { DotAdapter } from '../../Adapters/DotAdapter.js';
-import { TgGraph, asEdgeId, asNodeId } from '../../TgGraph.js';
+import {
+  TG_SCHEMA_VERSION,
+  TgGraph,
+  asEdgeId,
+  asNodeId,
+} from '../../TgGraph.js';
 import { EdgeDotProperties } from './EdgeDotProperties.js';
 
 describe('EdgeDotProperties.apply', () => {
@@ -10,6 +15,7 @@ describe('EdgeDotProperties.apply', () => {
     const edgeId = asEdgeId('edge-a-b');
 
     const tg: TgGraph = {
+      schemaVersion: TG_SCHEMA_VERSION,
       description: {},
       nodes: {
         [nodeA]: { id: nodeA, label: 'A' },
@@ -62,6 +68,7 @@ describe('EdgeDotProperties.apply', () => {
     const edgeId = asEdgeId('edge-a-b');
 
     const tg: TgGraph = {
+      schemaVersion: TG_SCHEMA_VERSION,
       description: {},
       nodes: {
         [nodeA]: { id: nodeA, label: 'A' },

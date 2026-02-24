@@ -1,5 +1,10 @@
 import Graph, { DirectedGraph, UndirectedGraph } from 'graphology';
-import { asEdgeId, asNodeId } from '../TgGraph.js';
+import {
+  TG_SCHEMA_VERSION,
+  asEdgeId,
+  asNodeId,
+  tgNodeIdFrom,
+} from '../TgGraph.js';
 import { GraphologyAdapter } from './GraphologyAdapter.js';
 
 const buildGraphFixture = () => {
@@ -12,9 +17,10 @@ const buildGraphFixture = () => {
   graph.addEdgeWithKey(e1, a, b, { weight: 2 });
   graph.setAttribute('tg:description', { note: 'test' });
   const tg = {
+    schemaVersion: TG_SCHEMA_VERSION,
     nodes: {
-      [a]: { id: a, label: 'A' },
-      [b]: { id: b, label: 'B' },
+      [a]: { id: a },
+      [b]: { id: b },
     },
     edges: [
       {
@@ -225,9 +231,10 @@ const buildTgGraph = () => {
   const { a, b, e1 } = buildGraphFixture();
   return {
     tg: {
+      schemaVersion: TG_SCHEMA_VERSION,
       nodes: {
-        [a]: { id: a, label: 'A' },
-        [b]: { id: b, label: 'B' },
+        [a]: { id: a },
+        [b]: { id: b },
       },
       edges: [
         {
@@ -257,9 +264,10 @@ describe('GraphologyAdapter.withTgGraph', () => {
   it('shoud default missing edge attributes to an empty object', () => {
     const { a, b, e1 } = buildGraphFixture();
     const tg = {
+      schemaVersion: TG_SCHEMA_VERSION,
       nodes: {
-        [a]: { id: a, label: 'A' },
-        [b]: { id: b, label: 'B' },
+        [a]: { id: a },
+        [b]: { id: b },
       },
       edges: [
         {
@@ -293,39 +301,47 @@ describe('GraphologyAdapter.toTgGraph', () => {
     expect(adapter.toTgGraph()).toStrictEqual(tg);
   });
 
-  it('shoud use fallback values when graph attributes are missing', () => {
+  it('shoud omit labels from the canonical tg model', () => {
     const graph = new DirectedGraph();
     const a = asNodeId('a');
     graph.addNode(a, { label: 'A' });
     const adapter = new GraphologyAdapter(graph);
 
     expect(adapter.toTgGraph()).toStrictEqual({
+      schemaVersion: TG_SCHEMA_VERSION,
       nodes: {
-        [a]: { id: a, label: 'A' },
+        [a]: { id: a },
       },
       edges: [],
       description: {},
     });
   });
 
-  it('shoud include meta and parent when present on the node attributes', () => {
+  it('shoud include terraform fields when present on the node attributes', () => {
     const graph = new DirectedGraph();
     const a = asNodeId('a');
-    const parentId = asNodeId('parent');
     graph.addNode(a, {
       label: 'A',
-      meta: { resource: 'some_resouce', name: 'some_name' },
-      parent: { id: parentId, isModule: true },
+      terraform: {
+        kind: 'resource',
+        address: 'aws_s3_bucket.main',
+        resource: 'aws_s3_bucket',
+        name: 'main',
+      },
     });
     const adapter = new GraphologyAdapter(graph);
 
     expect(adapter.toTgGraph()).toStrictEqual({
+      schemaVersion: TG_SCHEMA_VERSION,
       nodes: {
         [a]: {
           id: a,
-          label: 'A',
-          meta: { resource: 'some_resouce', name: 'some_name' },
-          parent: { id: parentId, isModule: true },
+          terraform: {
+            kind: 'resource',
+            address: 'aws_s3_bucket.main',
+            resource: 'aws_s3_bucket',
+            name: 'main',
+          },
         },
       },
       edges: [],
@@ -333,15 +349,46 @@ describe('GraphologyAdapter.toTgGraph', () => {
     });
   });
 
-  it('shoud fall back to the node id when the label is missing', () => {
+  it('shoud return an empty-node payload when neither label nor terraform exist', () => {
     const graph = new DirectedGraph();
     const a = asNodeId('a');
     graph.addNode(a, {});
     const adapter = new GraphologyAdapter(graph);
 
     expect(adapter.toTgGraph()).toStrictEqual({
+      schemaVersion: TG_SCHEMA_VERSION,
       nodes: {
-        [a]: { id: a, label: 'a' },
+        [a]: { id: a },
+      },
+      edges: [],
+      description: {},
+    });
+  });
+
+  it('shoud derive terraform details from namespaced node ids', () => {
+    const graph = new DirectedGraph();
+    const nodeId = tgNodeIdFrom(
+      'resource',
+      'module.example.aws_s3_bucket.main',
+    );
+    graph.addNode(nodeId, { label: 'bucket' });
+    const adapter = new GraphologyAdapter(graph);
+
+    expect(adapter.toTgGraph()).toStrictEqual({
+      schemaVersion: TG_SCHEMA_VERSION,
+      nodes: {
+        [nodeId]: {
+          id: nodeId,
+          terraform: {
+            kind: 'resource',
+            address: 'module.example.aws_s3_bucket.main',
+            resource: 'aws_s3_bucket',
+            name: 'main',
+            moduleAddress: 'module.example',
+            parentModuleName: 'example',
+            parentModuleNodeId: tgNodeIdFrom('module', 'module.example'),
+          },
+        },
       },
       edges: [],
       description: {},

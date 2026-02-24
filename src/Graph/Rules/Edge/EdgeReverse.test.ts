@@ -1,6 +1,11 @@
 import { DirectedGraph } from 'graphology';
 import { GraphologyAdapter } from '../../Adapters/GraphologyAdapter.js';
-import { TgGraph, asEdgeId, asNodeId } from '../../TgGraph.js';
+import {
+  TG_SCHEMA_VERSION,
+  TgGraph,
+  asEdgeId,
+  asNodeId,
+} from '../../TgGraph.js';
 import { EdgeReverse } from './EdgeReverse.js';
 
 describe('EdgeReverse.apply', () => {
@@ -19,6 +24,7 @@ describe('EdgeReverse.apply', () => {
     const otherEdgeId = asEdgeId('edge-2');
 
     const tg: TgGraph = {
+      schemaVersion: TG_SCHEMA_VERSION,
       description: {},
       nodes: {
         [nodeA]: { id: nodeA, label: 'A' },
@@ -60,6 +66,7 @@ describe('EdgeReverse.apply', () => {
     const edgeId = asEdgeId('edge-1');
 
     const tg: TgGraph = {
+      schemaVersion: TG_SCHEMA_VERSION,
       description: {},
       nodes: {
         [nodeA]: { id: nodeA, label: 'A' },

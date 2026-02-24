@@ -2,6 +2,7 @@ import { mock } from 'jest-mock-extended';
 import { GraphResolver, PhaseRunnerContext } from './GraphResolver.js';
 import { AdapterOperations } from './Operations/Operations.js';
 import { BaseRule } from './Rules/Rule.js';
+import { TG_SCHEMA_VERSION } from './TgGraph.js';
 
 describe('GraphResolver.resolve', () => {
   it('shoud resolve without phases when there are no nodes', () => {
@@ -18,6 +19,7 @@ describe('GraphResolver.resolve', () => {
 
     const res = resolver.resolve({
       graph: {
+        schemaVersion: TG_SCHEMA_VERSION,
         edges: [],
         nodes: {},
         description: {},

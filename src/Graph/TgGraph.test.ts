@@ -1,16 +1,46 @@
-import { EdgeId, NodeId, asEdgeId, asNodeId, edgeIdFrom } from './TgGraph.js';
+import {
+  EdgeId,
+  NodeId,
+  TG_SCHEMA_VERSION,
+  asEdgeId,
+  asNodeId,
+  edgeIdFrom,
+  parseTgNodeId,
+  tgNodeIdFrom,
+} from './TgGraph.js';
 
 describe('TgGraph.edgeIdFrom', () => {
   it('should create expected id without suffix', () => {
     expect(edgeIdFrom(asNodeId('from'), asNodeId('to'))).toStrictEqual(
-      'from:to',
+      `tg:${TG_SCHEMA_VERSION}:edge:from->to`,
     );
   });
 
   it('should create expected id with suffix', () => {
     expect(
       edgeIdFrom(asNodeId('from'), asNodeId('to'), 'suffix'),
-    ).toStrictEqual('from:to:suffix');
+    ).toStrictEqual(`tg:${TG_SCHEMA_VERSION}:edge:from->to:suffix`);
+  });
+});
+
+describe('TgGraph.tgNodeIdFrom', () => {
+  it('should create expected namespaced id', () => {
+    expect(tgNodeIdFrom('resource', 'aws_s3_bucket.example')).toStrictEqual(
+      `tg:${TG_SCHEMA_VERSION}:resource:aws_s3_bucket.example`,
+    );
+  });
+});
+
+describe('TgGraph.parseTgNodeId', () => {
+  it('should parse namespaced ids', () => {
+    expect(
+      parseTgNodeId(`tg:${TG_SCHEMA_VERSION}:resource:aws_s3_bucket.example`),
+    ).toStrictEqual({
+      namespace: 'tg',
+      version: TG_SCHEMA_VERSION,
+      kind: 'resource',
+      address: 'aws_s3_bucket.example',
+    });
   });
 });
 

@@ -11,6 +11,28 @@
 export type NodeId = string & { readonly __brand: 'NodeId' };
 export type EdgeId = string & { readonly __brand: 'EdgeId' };
 
+export const TG_ID_NAMESPACE = 'tg';
+export const TG_SCHEMA_VERSION = '1.0.0';
+
+export type TgNodeKind =
+  | 'resource'
+  | 'data'
+  | 'local'
+  | 'var'
+  | 'output'
+  | 'module'
+  | 'provider'
+  | 'root'
+  | 'meta'
+  | 'terraform';
+
+export type ParsedTgNodeId = {
+  namespace: string;
+  version: string;
+  kind: string;
+  address: string;
+};
+
 export type TgEdgeLegendAttribute = {
   label: string;
   // need to be explicit about styling fields? (for keys), or is that an Adapter specific thing?
@@ -34,34 +56,39 @@ export type TgEdge = {
   attributes?: TgEdgeAttributes;
 };
 
+export type TgNodeTerraform = {
+  kind?: TgNodeKind;
+  address?: string;
+  resource?: string;
+  name?: string;
+  moduleAddress?: string;
+  parentModuleName?: string;
+  parentModuleNodeId?: NodeId;
+};
+
 // probably DOT / graphviz  specific
 // export type TgGraphRank = {
 //   rankmode: string;
 //   nodes: string[];
 // };
 
+export type TgNodeAttributes = {
+  terraform?: TgNodeTerraform;
+  adapter?: Record<string, Record<string, unknown>>;
+  [key: string]: unknown;
+};
+
 export type TgNode = {
   //   shape: string; I think this is a rendering concern
   //   fontname: string; this is a rendering concern
   id: NodeId;
-  label: string;
-  adapter?: Record<string, Record<string, unknown>>;
-  meta?: {
-    resource: string;
-    name: string;
-  };
-  parent?: {
-    id: NodeId;
-    isModule: boolean;
-    nodeName?: string;
-  };
-};
-export type TgNodeAttributes = Omit<TgNode, 'id'>;
+} & TgNodeAttributes;
 
 // Pure-data internal graph model that can be JSON serialized.
 export type TgGraph = {
   //   meta: TgGraphMeta; currently this is all DOT specific
   //   graph: TgGraphAttributes; DOT specific
+  schemaVersion: string;
   nodes: Record<string, TgNode>;
   // edges reference node ids to keep the model normalized.
   edges: TgEdge[];
@@ -76,9 +103,37 @@ export const edgeIdFrom = (
   from: NodeId,
   to: NodeId,
   suffix?: string,
+  version = TG_SCHEMA_VERSION,
 ): EdgeId => {
-  const base = `${from}:${to}`;
+  const base = `${TG_ID_NAMESPACE}:${version}:edge:${from}->${to}`;
   return (suffix ? `${base}:${suffix}` : base) as EdgeId;
+};
+
+export const tgNodeIdFrom = (
+  kind: TgNodeKind,
+  address: string,
+  version = TG_SCHEMA_VERSION,
+): NodeId =>
+  `${TG_ID_NAMESPACE}:${version}:${kind}:${address}` as NodeId;
+
+export const parseTgNodeId = (
+  value: NodeId | string,
+): ParsedTgNodeId | undefined => {
+  const nodeId = String(value);
+  const parts = nodeId.split(':');
+  if (parts.length < 4) {
+    return undefined;
+  }
+  const [namespace, version, kind, ...addressParts] = parts;
+  if (namespace !== TG_ID_NAMESPACE || addressParts.length === 0) {
+    return undefined;
+  }
+  return {
+    namespace,
+    version,
+    kind,
+    address: addressParts.join(':'),
+  };
 };
 
 export const asNodeId = (value: string): NodeId => value as NodeId;

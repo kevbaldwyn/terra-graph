@@ -6,22 +6,49 @@ export type NamedRuleDefinition = SerializedRule | BaseRule | (() => BaseRule);
 type NamedRuleFactory = () => BaseRule;
 
 export class NamedRuleRegistry {
-  private readonly definitions: Record<string, NamedRuleFactory> = {};
+  private readonly definitions: Record<string, NamedRuleFactory>;
 
-  constructor(definitions: Record<string, NamedRuleDefinition> = {}) {
-    this.registerMany(definitions);
+  constructor(
+    definitions: Record<string, NamedRuleDefinition> = {},
+    factories?: Record<string, NamedRuleFactory>,
+  ) {
+    this.definitions = Object.freeze(
+      factories ?? NamedRuleRegistry.toFactories(definitions),
+    );
   }
 
-  public register(name: string, definition: NamedRuleDefinition): this {
-    this.definitions[name] = NamedRuleRegistry.toFactory(definition);
-    return this;
+  public static from(registries: NamedRuleRegistry[]): NamedRuleRegistry {
+    return registries.reduce(
+      (combined, registry) => combined.use(registry),
+      new NamedRuleRegistry(),
+    );
   }
 
-  public registerMany(definitions: Record<string, NamedRuleDefinition>): this {
-    for (const [name, definition] of Object.entries(definitions)) {
-      this.register(name, definition);
-    }
-    return this;
+  public register(
+    name: string,
+    definition: NamedRuleDefinition,
+  ): NamedRuleRegistry {
+    return NamedRuleRegistry.fromFactories({
+      ...this.definitions,
+      [name]: NamedRuleRegistry.toFactory(definition),
+    });
+  }
+
+  public registerMany(
+    definitions: Record<string, NamedRuleDefinition>,
+  ): NamedRuleRegistry {
+    const nextFactories = {
+      ...this.definitions,
+      ...NamedRuleRegistry.toFactories(definitions),
+    };
+    return NamedRuleRegistry.fromFactories(nextFactories);
+  }
+
+  public use(registry: NamedRuleRegistry): NamedRuleRegistry {
+    return NamedRuleRegistry.fromFactories({
+      ...this.definitions,
+      ...registry.definitions,
+    });
   }
 
   public resolve(name: string): BaseRule {
@@ -42,6 +69,23 @@ export class NamedRuleRegistry {
 
   public names(): string[] {
     return Object.keys(this.definitions);
+  }
+
+  private static fromFactories(
+    definitions: Record<string, NamedRuleFactory>,
+  ): NamedRuleRegistry {
+    return new NamedRuleRegistry({}, { ...definitions });
+  }
+
+  private static toFactories(
+    definitions: Record<string, NamedRuleDefinition>,
+  ): Record<string, NamedRuleFactory> {
+    return Object.fromEntries(
+      Object.entries(definitions).map(([name, definition]) => [
+        name,
+        NamedRuleRegistry.toFactory(definition),
+      ]),
+    );
   }
 
   private static toFactory(definition: NamedRuleDefinition): NamedRuleFactory {
