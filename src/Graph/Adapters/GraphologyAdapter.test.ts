@@ -199,34 +199,6 @@ describe('GraphologyAdapter.removeEdge', () => {
   });
 });
 
-describe('GraphologyAdapter.getLegend', () => {
-  it('shoud return unique legend edge ids', () => {
-    const graph = new DirectedGraph();
-    const a = asNodeId('a');
-    const b = asNodeId('b');
-    const c = asNodeId('c');
-    graph.addNode(a, { label: 'A' });
-    graph.addNode(b, { label: 'B' });
-    graph.addNode(c, { label: 'C' });
-
-    const e1 = asEdgeId('e1');
-    const e2 = asEdgeId('e2');
-    graph.addEdgeWithKey(e1, a, b, { legend: { label: 'route' } });
-    graph.addEdgeWithKey(e2, b, c, { legend: { label: 'route' } });
-
-    const adapter = new GraphologyAdapter(graph);
-
-    expect(adapter.getLegend()).toEqual([e1]);
-  });
-
-  it('shoud return an empty list when no legend is present', () => {
-    const { graph } = buildGraphFixture();
-    const adapter = new GraphologyAdapter(graph);
-
-    expect(adapter.getLegend()).toEqual([]);
-  });
-});
-
 const buildTgGraph = () => {
   const { a, b, e1 } = buildGraphFixture();
   return {

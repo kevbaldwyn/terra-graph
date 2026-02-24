@@ -28,7 +28,6 @@ export interface Operations {
   ): this;
   removeNode(nodeId: NodeId): this;
   removeEdge(edgeId: EdgeId): this;
-  getLegend(): EdgeId[];
 }
 
 export type AdapterOperations = Adapter & Operations;

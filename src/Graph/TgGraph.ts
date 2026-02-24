@@ -34,8 +34,8 @@ export type ParsedTgNodeId = {
 };
 
 export type TgEdgeLegendAttribute = {
-  label: string;
-  // need to be explicit about styling fields? (for keys), or is that an Adapter specific thing?
+  title: string;
+  colour: string;
 };
 
 export type TgEdgeRenderHints = {
@@ -113,8 +113,7 @@ export const tgNodeIdFrom = (
   kind: TgNodeKind,
   address: string,
   version = TG_SCHEMA_VERSION,
-): NodeId =>
-  `${TG_ID_NAMESPACE}:${version}:${kind}:${address}` as NodeId;
+): NodeId => `${TG_ID_NAMESPACE}:${version}:${kind}:${address}` as NodeId;
 
 export const parseTgNodeId = (
   value: NodeId | string,

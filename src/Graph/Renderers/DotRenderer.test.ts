@@ -11,7 +11,9 @@ describe('DotRenderer.render', () => {
 
     const tg: TgGraph = {
       schemaVersion: TG_SCHEMA_VERSION,
-      description: {},
+      description: {
+        Environment: 'test',
+      },
       nodes: {
         [nodeA]: {
           id: nodeA,
@@ -41,6 +43,10 @@ describe('DotRenderer.render', () => {
           from: nodeA,
           to: nodeB,
           attributes: {
+            legend: {
+              title: 'Bucket Relation',
+              colour: '#c20202',
+            },
             adapter: {
               [DotAdapter.name]: { style: 'dashed' },
             },
@@ -58,6 +64,16 @@ describe('DotRenderer.render', () => {
     expect(output).toContain('label="aws_s3_bucket.a"');
     expect(output).toContain('shape=box');
     expect(output).toContain('style=dashed');
+    expect(output).toContain('color="#c20202"');
+    expect(output).toContain('subgraph "cluster_Legend"');
+    expect(output).toContain('label="Bucket Relation"');
+    expect(output).toContain('Environment:');
+
+    const keyIndex = output.indexOf('subgraph "cluster_Legend"');
+    const nodeIndex = output.indexOf('"node-a"');
+    expect(keyIndex).toBeGreaterThan(-1);
+    expect(nodeIndex).toBeGreaterThan(-1);
+    expect(keyIndex).toBeLessThan(nodeIndex);
   });
 
   it('shoud include ranks when provided', () => {

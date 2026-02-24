@@ -187,24 +187,6 @@ export class GraphologyAdapter implements AdapterOperations {
     });
   }
 
-  public getLegend(): EdgeId[] {
-    const legend: EdgeId[] = [];
-    const seen = new Set<string>();
-    this.graph.forEachEdge((edgeId) => {
-      const attributes = this.graph.getEdgeAttributes(
-        edgeId,
-      ) as TgEdgeAttributes;
-      if (attributes.legend) {
-        const key = attributes.legend.label;
-        if (!seen.has(key)) {
-          seen.add(key);
-          legend.push(edgeId as EdgeId);
-        }
-      }
-    });
-    return legend;
-  }
-
   protected readGraphAttribute<T>(key: string, fallback: T): T {
     const value = this.graph.getAttribute(key);
     if (value !== undefined && value !== null) {
