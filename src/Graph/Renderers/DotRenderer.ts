@@ -118,7 +118,19 @@ export class DotRenderer implements Renderer<DotAdapter> {
       return output;
     }
 
-    const rankBlock = ranks
+    const existingNodeIds = new Set(adapter.nodeIds());
+    const filteredRanks = ranks
+      .map((rank) => ({
+        ...rank,
+        nodes: rank.nodes.filter((nodeId) => existingNodeIds.has(nodeId)),
+      }))
+      .filter((rank) => rank.nodes.length > 1);
+
+    if (filteredRanks.length === 0) {
+      return output;
+    }
+
+    const rankBlock = filteredRanks
       .map((rank) => {
         const nodes = rank.nodes.map((nodeId) => `"${nodeId}"`).join(' ');
         return `  { rank = ${rank.mode}; ${nodes} }`;

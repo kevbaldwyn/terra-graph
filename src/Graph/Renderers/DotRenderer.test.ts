@@ -115,6 +115,47 @@ describe('DotRenderer.render', () => {
     expect(output).toContain(`{ rank = same; "${nodeA}" "${nodeB}" }`);
   });
 
+  it('shoud omit rank entries for nodes that are not present', () => {
+    const nodeA = asNodeId('node-a');
+    const nodeB = asNodeId('node-b');
+    const missing = asNodeId('node-missing');
+
+    const tg: TgGraph = {
+      schemaVersion: TG_SCHEMA_VERSION,
+      description: {},
+      nodes: {
+        [nodeA]: {
+          id: nodeA,
+          terraform: {
+            kind: 'resource',
+            address: 'aws_s3_bucket.a',
+            resource: 'aws_s3_bucket',
+            name: 'a',
+          },
+        },
+        [nodeB]: {
+          id: nodeB,
+          terraform: {
+            kind: 'resource',
+            address: 'aws_s3_bucket.b',
+            resource: 'aws_s3_bucket',
+            name: 'b',
+          },
+        },
+      },
+      edges: [],
+    };
+
+    const adapter = new DotAdapter(new DirectedGraph()).withTgGraph(tg);
+    const ranked = adapter.addRank([nodeA, missing], 'same');
+    const renderer = new DotRenderer();
+
+    const output = renderer.render(ranked);
+
+    expect(output).not.toContain(missing);
+    expect(output).not.toContain(`{ rank = same; "${nodeA}" "${missing}" }`);
+  });
+
   it('shoud include graph attributes such as rankdir when provided', () => {
     const nodeA = asNodeId('node-a');
     const nodeB = asNodeId('node-b');
