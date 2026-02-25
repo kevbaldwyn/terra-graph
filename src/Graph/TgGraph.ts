@@ -43,7 +43,34 @@ export type TgEdgeRenderHints = {
   name: string;
 };
 
+export const TgEdgeDirectionSemantics = {
+  Invokes: 'invokes',
+  Accesses: 'accesses',
+  Publishes: 'publishes',
+  Triggers: 'triggers',
+  Routes: 'routes',
+  Authorizes: 'authorizes',
+  ObservedBy: 'observedBy',
+} as const;
+
+export type TgEdgeDirectionSemantic =
+  (typeof TgEdgeDirectionSemantics)[keyof typeof TgEdgeDirectionSemantics];
+
+export const TG_EDGE_DIRECTION_SEMANTICS = Object.freeze(
+  Object.values(TgEdgeDirectionSemantics),
+) as readonly TgEdgeDirectionSemantic[];
+
+export const isTgEdgeDirectionSemantic = (
+  value: unknown,
+): value is TgEdgeDirectionSemantic => {
+  return (
+    typeof value === 'string' &&
+    TG_EDGE_DIRECTION_SEMANTICS.includes(value as TgEdgeDirectionSemantic)
+  );
+};
+
 export interface TgEdgeAttributes extends Record<string, unknown> {
+  directionSemantic?: TgEdgeDirectionSemantic;
   legend?: TgEdgeLegendAttribute;
   renderHints?: TgEdgeRenderHints;
   adapter?: Record<string, Record<string, unknown>>;

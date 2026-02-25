@@ -1,6 +1,7 @@
 import {
   EdgeId,
   NodeId,
+  TG_EDGE_DIRECTION_SEMANTICS,
   TG_SCHEMA_VERSION,
   asEdgeId,
   asNodeId,
@@ -57,5 +58,19 @@ describe('TgGraph.asEdgeId', () => {
     const id = asEdgeId('edge-1');
     expect(id).toBe('edge-1');
     const _assert: EdgeId = id;
+  });
+});
+
+describe('TgGraph.TgEdgeDirectionSemantic', () => {
+  it('should include expected direction semantic values', () => {
+    expect(TG_EDGE_DIRECTION_SEMANTICS).toStrictEqual([
+      'invokes',
+      'accesses',
+      'publishes',
+      'triggers',
+      'routes',
+      'authorizes',
+      'observedBy',
+    ]);
   });
 });
