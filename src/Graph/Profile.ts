@@ -1,4 +1,10 @@
 import { AdapterOperationsConstructor } from './Operations/Operations.js';
+import {
+  GraphPluginRef,
+  GraphPluginRegistry,
+  resolveGraphPlugins,
+  SerializedGraphPluginRef,
+} from './GraphPlugin.js';
 import { NamedRuleRegistry } from './Rules/NamedRuleRegistry.js';
 import { NamedRuleSetRegistry } from './Rules/NamedRuleSetRegistry.js';
 import { BaseRule } from './Rules/Rule.js';
@@ -21,6 +27,7 @@ export type SerializedProfile<TOptions = Record<string, unknown>> = {
   supports?: string;
   render?: ProfileRenderConfig<TOptions>;
   phases?: SerializedPhasePlan;
+  plugins?: SerializedGraphPluginRef[];
   usesProfiles?: SerializedProfile<TOptions>[];
 };
 
@@ -28,6 +35,7 @@ export type ProfileOptions<TOptions = Record<string, unknown>> = {
   supports?: AdapterOperationsConstructor;
   render?: ProfileRenderConfig<TOptions>;
   phases?: PhasePlan;
+  plugins?: GraphPluginRef[];
   usesProfiles?: Profile<TOptions>[];
 };
 
@@ -35,6 +43,7 @@ export class Profile<TOptions = Record<string, unknown>> {
   public readonly supports?: AdapterOperationsConstructor;
   private readonly render?: ProfileRenderConfig<TOptions>;
   private readonly phases: PhasePlan;
+  private readonly plugins: GraphPluginRef[];
   private readonly usesProfiles: Profile<TOptions>[];
 
   constructor(
@@ -44,6 +53,7 @@ export class Profile<TOptions = Record<string, unknown>> {
     this.supports = options.supports;
     this.render = options.render;
     this.phases = options.phases ?? [];
+    this.plugins = options.plugins ?? [];
     this.usesProfiles = options.usesProfiles ?? [];
   }
 
@@ -52,6 +62,7 @@ export class Profile<TOptions = Record<string, unknown>> {
       supports: this.supports,
       render: this.render,
       phases: this.phases,
+      plugins: this.plugins,
       usesProfiles: [...this.usesProfiles, profile],
     });
   }
@@ -61,6 +72,17 @@ export class Profile<TOptions = Record<string, unknown>> {
       supports: this.supports,
       render: this.render,
       phases: [...this.phases, ...phases],
+      plugins: this.plugins,
+      usesProfiles: this.usesProfiles,
+    });
+  }
+
+  public usePlugin(plugin: string, options?: unknown): Profile<TOptions> {
+    return new Profile(this.name, {
+      supports: this.supports,
+      render: this.render,
+      phases: this.phases,
+      plugins: [...this.plugins, { plugin, options }],
       usesProfiles: this.usesProfiles,
     });
   }
@@ -68,17 +90,22 @@ export class Profile<TOptions = Record<string, unknown>> {
   public resolvePhases(
     namedRules?: NamedRuleRegistry,
     namedRuleSets?: NamedRuleSetRegistry,
+    pluginRegistry?: GraphPluginRegistry,
   ): BaseRule[][] {
     if (this.supports) {
       this.assertCompatibleSupportedAdapterOperations(this.supports);
     }
 
-    const ownPhases = this.resolveOwnPhases(namedRules, namedRuleSets);
+    const ownPhases = this.resolveOwnPhases(
+      namedRules,
+      namedRuleSets,
+      pluginRegistry,
+    );
     const inheritedPhases = this.usesProfiles.reduce(
       // biome-ignore lint/performance/noAccumulatingSpread: <explanation>
       (acc, profile) => [
         ...acc,
-        ...profile.resolvePhases(namedRules, namedRuleSets),
+        ...profile.resolvePhases(namedRules, namedRuleSets, pluginRegistry),
       ],
       [] as BaseRule[][],
     );
@@ -92,6 +119,7 @@ export class Profile<TOptions = Record<string, unknown>> {
       supports: this.supports?.name,
       render: this.render,
       phases: this.serializePhases(this.phases),
+      plugins: this.plugins.length > 0 ? [...this.plugins] : undefined,
       usesProfiles: this.usesProfiles.map((profile) => profile.serialize()),
     };
   }
@@ -112,6 +140,7 @@ export class Profile<TOptions = Record<string, unknown>> {
       supports,
       render: json.render,
       phases: Profile.deserializePhases(json.phases ?? []),
+      plugins: [...(json.plugins ?? [])],
       usesProfiles: (json.usesProfiles ?? []).map((profile) =>
         Profile.deseriaize<TOptions>(profile, supportedAdpaterOperationsRegistry),
       ),
@@ -150,12 +179,55 @@ export class Profile<TOptions = Record<string, unknown>> {
   private resolveOwnPhases(
     namedRules?: NamedRuleRegistry,
     namedRuleSets?: NamedRuleSetRegistry,
+    pluginRegistry?: GraphPluginRegistry,
   ): BaseRule[][] {
-    return this.phases.map((phase) =>
+    const resolvedPlugins = this.resolveOwnPlugins(
+      namedRules,
+      namedRuleSets,
+      pluginRegistry,
+    );
+    const phases = [...resolvedPlugins.phases, ...this.phases];
+
+    return phases.map((phase) =>
       phase.flatMap((rule) =>
-        this.resolveRule(rule, namedRules, namedRuleSets),
+        this.resolveRule(
+          rule,
+          resolvedPlugins.namedRules,
+          resolvedPlugins.namedRuleSets,
+        ),
       ),
     );
+  }
+
+  private resolveOwnPlugins(
+    namedRules?: NamedRuleRegistry,
+    namedRuleSets?: NamedRuleSetRegistry,
+    pluginRegistry?: GraphPluginRegistry,
+  ): {
+    phases: PhasePlan;
+    namedRules?: NamedRuleRegistry;
+    namedRuleSets?: NamedRuleSetRegistry;
+  } {
+    if (this.plugins.length === 0) {
+      return {
+        phases: [],
+        namedRules,
+        namedRuleSets,
+      };
+    }
+
+    if (!pluginRegistry) {
+      throw new Error(
+        `Profile '${this.name}' contains plugins but no GraphPluginRegistry was provided`,
+      );
+    }
+
+    return resolveGraphPlugins({
+      plugins: this.plugins,
+      pluginRegistry,
+      namedRules,
+      namedRuleSets,
+    });
   }
 
   private resolveRule(

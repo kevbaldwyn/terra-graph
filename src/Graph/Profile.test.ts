@@ -1,6 +1,8 @@
 import { GraphologyAdapter } from './Adapters/GraphologyAdapter.js';
 import { NodeQuery } from './Operations/Matchers/NodeQuery/NodeQuery.js';
 import { AdapterOperations } from './Operations/Operations.js';
+import { GraphPlugin, GraphPluginRegistry } from './GraphPlugin.js';
+import type { GraphPluginBuildInput } from './GraphPlugin.js';
 import { Profile } from './Profile.js';
 import { NamedRuleSetRegistry } from './Rules/NamedRuleSetRegistry.js';
 import { RuleSet } from './Rules/RuleSet.js';
@@ -26,6 +28,34 @@ const createAlwaysMatch = (query?: NodeQuery): NodeRule =>
       query ?? NodeQuery.from({ attr: { key: 'label', exists: true } })
     ).getDsl(),
   });
+
+class RemoveLabelPlugin extends GraphPlugin<{ label: string }> {
+  constructor() {
+    super('test.remove_label', { label: 'default' });
+  }
+
+  public override build({
+    options,
+  }: GraphPluginBuildInput<{ label: string }>) {
+    return {
+      namedRules: {
+        remove_label: createAlwaysMatch(
+          NodeQuery.from({ attr: { key: 'label', eq: options.label } }),
+        ),
+      },
+      namedRuleSets: {
+        remove_label_set: new RuleSet({
+          rules: [{ namedRule: 'remove_label' }],
+        }),
+      },
+      phases: [[{ namedRuleSet: 'remove_label_set' }]],
+    };
+  }
+}
+
+const pluginRegistry = new GraphPluginRegistry({
+  'test.remove_label': new RemoveLabelPlugin(),
+});
 
 describe('Profile.serialize', () => {
   it('shoud serialize rules and operations type', () => {
@@ -89,6 +119,28 @@ describe('Profile.serialize', () => {
       }),
     );
   });
+
+  it('shoud serialize plugin references but not plugin-resolved phases', () => {
+    const profile = new Profile('my-profile', {
+      plugins: [
+        {
+          plugin: 'test.remove_label',
+          options: { label: 'plugin' },
+        },
+      ],
+      phases: [],
+    });
+
+    const json = profile.serialize();
+
+    expect(json.plugins).toStrictEqual([
+      {
+        plugin: 'test.remove_label',
+        options: { label: 'plugin' },
+      },
+    ]);
+    expect(json.phases).toStrictEqual([]);
+  });
 });
 
 describe('Profile.deserialize', () => {
@@ -113,6 +165,26 @@ describe('Profile.deserialize', () => {
     expect(restored.serialize()).toStrictEqual(json);
     expect(restored.resolvePhases()).toHaveLength(1);
     expect(restored.resolvePhases()[0]).toHaveLength(1);
+  });
+
+  it('shoud deserialize plugin references', () => {
+    const profile = new Profile('my-profile', {
+      plugins: [
+        {
+          plugin: 'test.remove_label',
+          options: { label: 'plugin' },
+        },
+      ],
+    });
+    const json = profile.serialize();
+    const restored = Profile.deseriaize(json);
+
+    expect(restored.serialize().plugins).toStrictEqual([
+      {
+        plugin: 'test.remove_label',
+        options: { label: 'plugin' },
+      },
+    ]);
   });
 });
 
@@ -156,6 +228,97 @@ describe('Profile.resolveRendererOptions', () => {
 });
 
 describe('Profile.resolvePhases', () => {
+  it('shoud resolve plugin phases at runtime', () => {
+    const profile = new Profile('plugin-profile', {
+      plugins: [
+        {
+          plugin: 'test.remove_label',
+          options: { label: 'plugin' },
+        },
+      ],
+    });
+
+    const phases = profile.resolvePhases(undefined, undefined, pluginRegistry);
+
+    expect(phases).toHaveLength(1);
+    expect(phases[0]).toHaveLength(1);
+    expect(phases[0][0].serialize()).toEqual({
+      id: 'AlwaysMatchRule',
+      config: { node: { attr: { key: 'label', eq: 'plugin' } } },
+    });
+  });
+
+  it('shoud auto-prefix plugin named rules and named rule sets', () => {
+    class PrefixRulePlugin extends GraphPlugin {
+      constructor() {
+        super('plugin.prefix');
+      }
+
+      public build() {
+        return {
+          namedRules: {
+            remove: {
+              id: 'AlwaysMatchRule',
+              config: {
+                node: { attr: { key: 'label', eq: 'prefixed' } },
+              },
+            },
+          },
+          namedRuleSets: {
+            wrapper: new RuleSet({
+              rules: [{ namedRule: 'remove' }],
+            }),
+          },
+          phases: [[{ namedRuleSet: 'wrapper' }]],
+        };
+      }
+    }
+
+    const registry = new GraphPluginRegistry({
+      'plugin.prefix': new PrefixRulePlugin(),
+    });
+    const profile = new Profile('plugin-profile', {
+      plugins: [{ plugin: 'plugin.prefix' }],
+    });
+
+    const phases = profile.resolvePhases(undefined, undefined, registry);
+
+    expect(phases).toHaveLength(1);
+    expect(phases[0]).toHaveLength(1);
+    expect(phases[0][0].serialize()).toEqual({
+      id: 'AlwaysMatchRule',
+      config: { node: { attr: { key: 'label', eq: 'prefixed' } } },
+    });
+  });
+
+  it('shoud throw when plugins are used without a plugin registry', () => {
+    const profile = new Profile('plugin-profile', {
+      plugins: [{ plugin: 'test.remove_label' }],
+    });
+
+    expect(() => profile.resolvePhases()).toThrow(
+      "Profile 'plugin-profile' contains plugins but no GraphPluginRegistry was provided",
+    );
+  });
+
+  it('shoud throw when plugin prefixed names collide', () => {
+    const profile = new Profile('plugin-profile', {
+      plugins: [{ plugin: 'test.remove_label' }],
+    });
+    const namedRules = new NamedRuleRegistry({
+      'test.remove_label.remove_label': {
+        id: 'AlwaysMatchRule',
+        config: { node: { any: true } },
+      },
+    });
+
+    expect(() =>
+      profile.resolvePhases(namedRules, undefined, pluginRegistry),
+    ).toThrow(
+      "GraphPlugin 'test.remove_label' named rule 'test.remove_label.remove_label' collides with an existing named rule",
+    );
+  });
+
   it('shoud resolve named rules when a registry is provided', () => {
     const registry = new NamedRuleRegistry({
       removeAlways: {
@@ -324,5 +487,17 @@ describe('Profile.resolvePhases', () => {
       id: 'AlwaysMatchRule',
       config: { node: { attr: { key: 'label', eq: 'current' } } },
     });
+  });
+});
+
+describe('Profile.usePlugin', () => {
+  it('shoud append plugin references immutably', () => {
+    const base = new Profile('plugin-profile', {});
+    const updated = base.usePlugin('test.remove_label', { label: 'plugin' });
+
+    expect(base.serialize().plugins ?? []).toHaveLength(0);
+    expect(updated.serialize().plugins).toStrictEqual([
+      { plugin: 'test.remove_label', options: { label: 'plugin' } },
+    ]);
   });
 });
