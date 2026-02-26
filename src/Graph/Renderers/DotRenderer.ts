@@ -212,13 +212,18 @@ ${legendRows}
   }
 
   private buildNodeLabel(node: TgNode): string {
+    const kind = node.terraform?.kind;
     const resource = node.terraform?.resource ?? '';
     const name = node.terraform?.name ?? '';
-    if (resource && name) {
-      return `${resource}.${name}`;
+    const parentModuleName = node.terraform?.parentModuleName ?? '';
+    const labelName =
+      parentModuleName && kind !== 'module' ? parentModuleName : name;
+
+    if (resource && labelName) {
+      return `${resource}.${labelName}`;
     }
-    if (name) {
-      return name;
+    if (labelName) {
+      return labelName;
     }
     if (resource) {
       return resource;

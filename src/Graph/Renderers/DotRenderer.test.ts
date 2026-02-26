@@ -196,6 +196,37 @@ describe('DotRenderer.render', () => {
     expect(output).toContain('rankdir=LR');
   });
 
+  it('shoud use parentModuleName when rendering resource labels', () => {
+    const nodeA = asNodeId('node-a');
+
+    const tg: TgGraph = {
+      schemaVersion: TG_SCHEMA_VERSION,
+      description: {},
+      nodes: {
+        [nodeA]: {
+          id: nodeA,
+          terraform: {
+            kind: 'resource',
+            address: 'module.network.aws_security_group.this',
+            resource: 'aws_security_group',
+            name: 'this',
+            moduleAddress: 'module.network',
+            parentModuleName: 'network',
+          },
+        },
+      },
+      edges: [],
+    };
+
+    const adapter = new DotAdapter(new DirectedGraph()).withTgGraph(tg);
+    const renderer = new DotRenderer();
+
+    const output = renderer.render(adapter);
+
+    expect(output).toContain('label="aws_security_group.network"');
+    expect(output).not.toContain('label="aws_security_group.this"');
+  });
+
   it('shoud set nodesep and ranksep defaults for TB rankdir when not provided', () => {
     const nodeA = asNodeId('node-a');
 
